@@ -2,10 +2,10 @@
 
 /**
  * @brief prikeyToRSA
- * @param str ±ØĞëÊÇpem¸ñÊ½,×¢ÒâÔÚÍ·±êºóºÍÎ²±íÇ°±£Ö¤ÓĞÒ»¸ö/n, pkcs1»òpcks8¶¼ĞĞ
+ * @param str å¿…é¡»æ˜¯pemæ ¼å¼,æ³¨æ„åœ¨å¤´æ ‡åå’Œå°¾è¡¨å‰ä¿è¯æœ‰ä¸€ä¸ª/n, pkcs1æˆ–pcks8éƒ½è¡Œ
  * @param r
  * @return
- * ×¢Òâ!!!µ÷ÓÃº¯ÊıÒ»¶¨ÒªÔÚÍâ²¿RSA_free(r)!!!
+ * æ³¨æ„!!!è°ƒç”¨å‡½æ•°ä¸€å®šè¦åœ¨å¤–éƒ¨RSA_free(r)!!!
  */
 int prikeyToRSA(const char *key, RSA **r){
     BIO *keybio = BIO_new_mem_buf(key, -1);
@@ -31,7 +31,7 @@ int pubkeyToRSA(const char *key, RSA **r)
 /**
  * @brief RSAGetPKCS1
  * @param r
- * @param str ²ÎÊıÒª±£Ö¤ÓĞ×ã¹»µÄ¿Õ¼ä£¬½¨Òé2000byte,²»ÏëÄÚ²¿ÉêÇëÅÂÍü¼ÇÊÍ·Å
+ * @param str å‚æ•°è¦ä¿è¯æœ‰è¶³å¤Ÿçš„ç©ºé—´ï¼Œå»ºè®®2000byte,ä¸æƒ³å†…éƒ¨ç”³è¯·æ€•å¿˜è®°é‡Šæ”¾
  * @return
  */
 int RSAGetPKCS1(RSA *r, char res[]){
@@ -50,7 +50,7 @@ int RSAGetPKCS1(RSA *r, char res[]){
 /**
  * @brief RSAGetPKCS8
  * @param r
- * @param str ²ÎÊıÒª±£Ö¤ÓĞ×ã¹»µÄ¿Õ¼ä£¬½¨Òé2000byte,²»ÏëÄÚ²¿ÉêÇëÅÂÍü¼ÇÊÍ·Å
+ * @param str å‚æ•°è¦ä¿è¯æœ‰è¶³å¤Ÿçš„ç©ºé—´ï¼Œå»ºè®®2000byte,ä¸æƒ³å†…éƒ¨ç”³è¯·æ€•å¿˜è®°é‡Šæ”¾
  * @return
  */
 int RSAGetPKCS8(RSA *r, char res[]){
@@ -72,7 +72,7 @@ int RSAGetPKCS8(RSA *r, char res[]){
 /**
  * @brief RSAGetPub
  * @param r
- * @param res »ñÈ¡¹«Ô¿£¬¹«Ô¿ÊÇPEM¸ñÊ½£¬Í·²¿Î²²¿Ã»ÓĞRSA¹Ø¼ü×Ö
+ * @param res è·å–å…¬é’¥ï¼Œå…¬é’¥æ˜¯PEMæ ¼å¼ï¼Œå¤´éƒ¨å°¾éƒ¨æ²¡æœ‰RSAå…³é”®å­—
  * @return
  */
 int RSAGetPub(RSA *r, char res[])
@@ -94,7 +94,7 @@ int RSAGetPub(RSA *r, char res[])
  * @param type
  * @param sour
  * @param sourl
- * @param res base64×Ö·û´®ÒÔ\0½áÎ², ÒòÎªÃÜÔ¿³¤¶È×î³¤256£¬base64ÒÔºóÓ¦¸Ã²»»á³¬¹ı500
+ * @param res base64å­—ç¬¦ä¸²ä»¥\0ç»“å°¾, å› ä¸ºå¯†é’¥é•¿åº¦æœ€é•¿256ï¼Œbase64ä»¥ååº”è¯¥ä¸ä¼šè¶…è¿‡500
  * @return
  */
 int RSASignBase64(RSA *r, int type, const unsigned char *sour, int sourl, unsigned char res[]){
@@ -121,7 +121,7 @@ int RSASignBase64(RSA *r, int type, const unsigned char *sour, int sourl, unsign
 /**
  * @brief RSAVerifyRes
  * @param r
- * @param in  ÊäÈëµÄ²»ÊÇbase64£¬ÊÇË½Ô¿Ç©ÃûºóµÄÄÚÈİ
+ * @param in  è¾“å…¥çš„ä¸æ˜¯base64ï¼Œæ˜¯ç§é’¥ç­¾ååçš„å†…å®¹
  * @param inl
  * @param out
  * @param outl
@@ -155,7 +155,7 @@ int RSAVerifyBase64(RSA *r, unsigned char *in, unsigned char out[], int *outl)
  * @brief decodeBase64
  * @param in
  * @param out
- * @param outl ÓÃEVP_DecodeBlockº¯Êı²»»á×Ô¶¯È¥µôºóÃæµÄ¡®=¡¯ËùÒÔÊÇ3µÄ±¶Êı£¬Òª×Ô¼ºÈ¥µô¡®=¡¯µÄÎ»Êı
+ * @param outl ç”¨EVP_DecodeBlockå‡½æ•°ä¸ä¼šè‡ªåŠ¨å»æ‰åé¢çš„â€˜=â€™æ‰€ä»¥æ˜¯3çš„å€æ•°ï¼Œè¦è‡ªå·±å»æ‰â€˜=â€™çš„ä½æ•°
  * @return
  */
 int decodeBase64(const unsigned char *in, unsigned char out[], int *outl){
