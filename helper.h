@@ -14,5 +14,7 @@ int RSASignBase64(RSA *r, int type, const unsigned char *sour, int sourl, unsign
 int RSAVerifyBase64(RSA *r, unsigned char *in, unsigned char out[], int *outl);
 int RSAVerifyRes(RSA *r, unsigned char *in, int inl, unsigned char out[], int *outl);
 int decodeBase64(const unsigned char *in, unsigned char out[], int *outl);
+int RSAGetPubXml(RSA *r, char res[]);
+int RSAGetPriXml(RSA *r, char res[]);
 
 #endif // HELPER_H

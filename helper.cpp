@@ -142,8 +142,8 @@ int RSAVerifyRes(RSA *r, unsigned char *in, int inl, unsigned char out[], int *o
     return 1;
 }
 
-int RSAVerifyBase64(RSA *r, unsigned char *in, unsigned char out[], int *outl)
-{
+int RSAVerifyBase64(RSA *r, unsigned char *in, unsigned char out[], int *outl){
+
     unsigned char tmp[500];
     int tmpl;
     decodeBase64(in, tmp, &tmpl);
@@ -171,4 +171,35 @@ int decodeBase64(const unsigned char *in, unsigned char out[], int *outl){
 
 
 
+int RSAGetPubXml(RSA *r, char res[])
+{
+    unsigned char tmp[2][2000];
+    int tmpl[2];
+    tmpl[0] = BN_bn2bin(r->n, tmp[0]);
+    tmpl[1] = BN_bn2bin(r->e, tmp[1]);
+    unsigned char blo[2][2000];
+    EVP_EncodeBlock(blo[0], tmp[0], tmpl[0]);
+    EVP_EncodeBlock(blo[1], tmp[1], tmpl[1]);
+    sprintf(res, "<RSAKeyValue><Modulus>%s</Modulus><Exponent>%s</Exponent></RSAKeyValue>", blo[0], blo[1]);
+    return 1;
+}
 
+int RSAGetPriXml(RSA *r, char res[])
+{
+    unsigned char tmp[8][2000];
+    int tmpl[8];
+    tmpl[0] = BN_bn2bin(r->n, tmp[0]);
+    tmpl[1] = BN_bn2bin(r->e, tmp[1]);
+    tmpl[2] = BN_bn2bin(r->d, tmp[2]);
+    tmpl[3] = BN_bn2bin(r->p, tmp[3]);
+    tmpl[4] = BN_bn2bin(r->q, tmp[4]);
+    tmpl[5] = BN_bn2bin(r->dmp1, tmp[5]);
+    tmpl[6] = BN_bn2bin(r->dmq1, tmp[6]);
+    tmpl[7] = BN_bn2bin(r->iqmp, tmp[7]);
+    unsigned char blo[8][2000];
+    for(int i=0;i<8;i++)
+        EVP_EncodeBlock(blo[i], tmp[i], tmpl[i]);
+    sprintf(res, "<RSAKeyValue><Modulus>%s</Modulus><Exponent>%s</Exponent><D>%s</D><P>%s</P><Q>%s</Q><DP>%s</DP><DQ>%s</DQ><InverseQ>%s</InverseQ></RSAKeyValue>",
+            blo[0], blo[1], blo[2], blo[3], blo[4], blo[5], blo[6], blo[7]);
+    return 1;
+}

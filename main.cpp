@@ -11,6 +11,7 @@
 #include<string.h>
 #include "helper.h"
 
+
 int main()
 {
     RSA  *r=NULL , *rp= NULL;
@@ -18,7 +19,7 @@ int main()
     unsigned long  e=RSA_F4;
     int len=0, flen, padding;
     EVP_PKEY *k = NULL;
-    unsigned char reee[2000], reek[2000];
+    unsigned char reee[2000], reek[2000], rekk[2000];
     char key[]= "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDJgQfODtCNz/HP"
                                              "ZlF58boMSS95cN7tmUL/zPkXiMl1/K8Tk2N/eJHrpEG38QVopNhlaiRxNN4WOlRf"
                 "                            5DKUSoCtH+B9WobodVcyUA7TQAEm5rZkPNo14/UTDVDsql4ugW8his38Mr4n4PfUW9+VFWHpTIIFbR0V+5NT2EQiEnCHxnBYgQlSa7JvphcsxKSRsXZ/+I4DoRudDfp71nrTm4gOeiuMUVzIOF+S/lCPBGKDXyyvJAOAoxuD8dB0yeohMkn50VnvGLMG6QmLAE50GE6BAB0P+EvGj14NgsE/thLzhnDRgmK9Cfn5KODUtfmsmXCbuXSsiVveUvsKlb4WPXYVAgMBAAECggEALz+RG/D/V/FFavM78ZMLo+vZNOmRbDb+rcpbMfiB/Kd2SenKb85OsOk/+6iJMyNMFmOQDfduh9m/hQiWD410pKOP2PTMI1+4RXTeNQyR+JQqelCGfhJomcIKkqPUF6WD8GKCsDsZuXIXynSMdYGhBrpI1oriQhBOWF+igja+qickEXvAUx+r5NMr+Q6YhEZoxx3k/77sG9gvodq/GYoX7KzODiH1eaMFIgThkwO7Oswwv7IyoZ+UIb2vVm+IWW8seMzxmLAqz5N8rUZPDWRTc/G1aSpOcCD+EDglH8uehwunNWZ9fbC8HdukDX83rrMpvTABzxw7ekf6BHh+s4iglQKBgQDn7Ho+4ui8XIdF/ceegGlwbQn9vbkQnKZeg/SXP/Lnf9VxlE8CLuLzbLmA30WYjtWS2gbcNr/Ffv3w9NGoJP90y12RLU2g8lpRObLN5d2xmwRmQIF/dg+4KRteLgFfrcLuSLcj8/cfWCJX/Je4MqIHM24fVYTKqJu3EHAPSx5BtwKBgQDebCEmC8HQzNFn4LKqKVrdQB3j245i4dBR/BL76TMoBBgtpoNEsvJ0aWeV5d2SHzHD4cJOW20xpbL3za++j/BuZThr2wCaxbSD5TxN94qUOyzRs0PT9CZzvq8qS8iegRVrGBmtkLZVLhC2+IyE6esClO2cBbzOijyIfQuxF4gWkwKBgQDMY18oZJhux6x/RjPRv6EsbyvK7pRVy3fi+69mS/kpg0L7oZQvfFqN5Fdm911CIT6e+H3rPGStDEmHPHo4EMMAjuiatK4hFPP7eTnWsqk5iD/MTTTSu50G01NHIIwdYejUTkj36lzyxp0dpYGf1x9r8SsvehJY91ajcl0PXUgA6QKBgQDT4Y/GbYbJgIOvgBbTEKg1gmG28S13twO7RfVTsngAE75wpmIALLPY/5wk6J+lFkBTCJoQCPpBREbz1yYm03nHwHb6D9tIlTP8PYCwCTMjOCfe7/WaUMfclPbKxPytOeyMY536gJOhG0vi8WzzJN6yS+r6KWEOJBO8NdrQbck/LwKBgQCLR47+q+jufc6omk6CVTywvLhqBbf5lf0kvwe8HAJ0O0X9RPpaQWd8YERFUQ45WKURbnQgnTHf1VsbzGWli0zyRU4PU5xjUgGLoG8cP5qD4nRfpDVw9ZJLFdfdT37SJAXEr8LE7A0OQLIJCNEsRZqCUhPJ1QDFmV7+0ZsnT+5smg==\n-----END PRIVATE KEY-----";
@@ -32,24 +33,69 @@ int main()
 //        printf("%02x ", reee[i]);
 //    }
 
-
-    //unsigned char tmmp[2000];
+    char tmmp[2000];
     unsigned char baseout[20000];
     int tmpl, outl;
 
+    prikeyToRSA(key, &r);
 
-    pubkeyToRSA(keypub, &r);
+    RSAGetPubXml(r, tmmp);
+    printf("%s\n", tmmp);
 
-    RSA_print_fp(stdout,r,11);
+    RSAGetPriXml(r, tmmp);
+    printf("%s\n", tmmp);
 
-    puts("\n");
 
-    outl = BN_bn2bin(r->n, baseout);
-    for(i=0;i<outl;i++){
-        printf("%02x:", baseout[i]);
-        if((i+1)%15==0)
-            puts("");
-    }
+
+    //pubkeyToRSA(keypub, &r);
+    //r = RSA_generate_key(2048, RSA_F4,NULL,NULL);
+
+    //RSA_print_fp(stdout,r,11);
+
+    RSAGetPub(r, (char*)reee);
+    printf("%s\n", reee);
+
+//    RSAGetPKCS8(r, (char*)reee);
+//    printf("%s\n", reee);
+
+    //printf("%d\n", strlen(key));
+
+
+
+
+
+
+//    puts("\n");
+//    char *kkk = NULL;
+
+//    outl = BN_bn2bin(r->n, baseout);
+//    for(i=0;i<outl;i++){
+//        printf("%02x:", baseout[i]);
+//        if((i+1)%15==0)
+//            puts("");
+//    }
+//    puts("");
+
+//    kkk = BN_bn2hex(r->n);
+//    printf("%s", kkk);
+
+//    OPENSSL_free(kkk);
+//    puts("");
+//    reek[0]= 0;
+//    for(i=0;i<outl+1;i++){
+//        printf("%02x:", reek[i]);
+//        if((i+1)%15==0)
+//            puts("");
+//    }
+//    puts("");
+
+//    EVP_EncodeBlock(reee, baseout, outl);
+//    printf("%s\n", reee);
+
+//    EVP_EncodeBlock(rekk, reek+1, outl);
+//    printf("%s\n", rekk);
+
+
 
     //RSAGetPKCS1(r, (char*)tmmp);
 //    unsigned char tmmp[] = "MIIEpQIBAAKCAQEAyYEHzg7Qjc/xz2ZRefG6DEkveXDe7ZlC/8z5F4jJdfyvE5Njf3iR66RBt/EFaKTYZWokcTTeFjpUX+QylEqArR/gfVqG6HVXMlAO00ABJua2ZDzaNeP1Ew1Q7KpeLoFvIYrN/DK+J+D31FvflRVh6UyCBW0dFfuTU9hEIhJwh8ZwWIEJUmuyb6YXLMSkkbF2f/iOA6EbnQ36e9Z605uIDnorjFFcyDhfkv5QjwRig18sryQDgKMbg/HQdMnqITJJ+dFZ7xizBukJiwBOdBhOgQAdD/hLxo9eDYLBP7YS84Zw0YJivQn5+Sjg1LX5rJlwm7l0rIlb3lL7CpW+Fj12FQIDAQABAoIBAC8/kRvw/1fxRWrzO/GTC6Pr2TTpkWw2/q3KWzH4gfyndknpym/OTrDpP/uoiTMjTBZjkA33bofZv4UIlg+NdKSjj9j0zCNfuEV03jUMkfiUKnpQhn4SaJnCCpKj1Belg/BigrA7GblyF8p0jHWBoQa6SNaK4kIQTlhfooI2vqonJBF7wFMfq+TTK/kOmIRGaMcd5P++7BvYL6HavxmKF+yszg4h9XmjBSIE4ZMDuzrMML+yMqGflCG9r1ZviFlvLHjM8ZiwKs+TfK1GTw1kU3PxtWkqTnAg/hA4JR/LnocLpzVmfX2wvB3bpA1/N66zKb0wAc8cO3pH+gR4frOIoJUCgYEA5+x6PuLovFyHRf3HnoBpcG0J/b25EJymXoP0lz/y53/VcZRPAi7i82y5gN9FmI7VktoG3Da/xX798PTRqCT/dMtdkS1NoPJaUTmyzeXdsZsEZkCBf3YPuCkbXi4BX63C7ki3I/P3H1giV/yXuDKiBzNuH1WEyqibtxBwD0seQbcCgYEA3mwhJgvB0MzRZ+Cyqila3UAd49uOYuHQUfwS++kzKAQYLaaDRLLydGlnleXdkh8xw+HCTlttMaWy982vvo/wbmU4a9sAmsW0g+U8TfeKlDss0bND0/Qmc76vKkvInoEVaxgZrZC2VS4QtviMhOnrApTtnAW8zoo8iH0LsReIFpMCgYEAzGNfKGSYbsesf0Yz0b+hLG8ryu6UVct34vuvZkv5KYNC+6GUL3xajeRXZvddQiE+nvh96zxkrQxJhzx6OBDDAI7omrSuIRTz+3k51rKpOYg/zE000rudBtNTRyCMHWHo1E5I9+pc8sadHaWBn9cfa/ErL3oSWPdWo3JdD11IAOkCgYEA0+GPxm2GyYCDr4AW0xCoNYJhtvEtd7cDu0X1U7J4ABO+cKZiACyz2P+cJOifpRZAUwiaEAj6QURG89cmJtN5x8B2+g/bSJUz/D2AsAkzIzgn3u/1mlDH3JT2ysT8rTnsjGOd+oCToRtL4vFs8yTeskvq+ilhDiQTvDXa0G3JPy8CgYEAi0eO/qvo7n3OqJpOglU8sLy4agW3+ZX9JL8HvBwCdDtF/UT6WkFnfGBERVEOOVilEW50IJ0x39VbG8xlpYtM8kVOD1OcY1IBi6BvHD+ag+J0X6Q1cPWSSxXX3U9+0iQFxK/CxOwNDkCyCQjRLEWaglITydUAxZle/tGbJ0/ubJo=";
