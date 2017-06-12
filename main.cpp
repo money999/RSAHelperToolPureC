@@ -33,17 +33,21 @@ int main()
 //        printf("%02x ", reee[i]);
 //    }
 
+    char *trr = "<RSAKeyValue><Modulus>1</Modulus><Exponent>2</Exponent><D>3</D><P>4</P><Q>5</Q><DP>6</DP><DQ>7</DQ><InverseQ>8</InverseQ></RSAKeyValue>";
+
     char tmmp[2000];
     unsigned char baseout[20000];
     int tmpl, outl;
 
-    prikeyToRSA(key, &r);
+    xmlkeyToRSA(trr, &r);
 
-    RSAGetPubXml(r, tmmp);
-    printf("%s\n", tmmp);
+//    prikeyToRSA(key, &r);
 
-    RSAGetPriXml(r, tmmp);
-    printf("%s\n", tmmp);
+//    RSAGetPubXml(r, tmmp);
+//    printf("%s\n", tmmp);
+
+//    RSAGetPriXml(r, tmmp);
+//    printf("%s\n", tmmp);
 
 
 
@@ -52,8 +56,8 @@ int main()
 
     //RSA_print_fp(stdout,r,11);
 
-    RSAGetPub(r, (char*)reee);
-    printf("%s\n", reee);
+//    RSAGetPub(r, (char*)reee);
+//    printf("%s\n", reee);
 
 //    RSAGetPKCS8(r, (char*)reee);
 //    printf("%s\n", reee);

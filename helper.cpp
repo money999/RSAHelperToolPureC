@@ -168,25 +168,34 @@ int decodeBase64(const unsigned char *in, unsigned char out[], int *outl){
     return 1;
 }
 
-
-
-
+/**
+ * @brief RSAGetPubXml
+ * @param r
+ * @param res 建议大小500+
+ * @return
+ */
 int RSAGetPubXml(RSA *r, char res[])
 {
-    unsigned char tmp[2][2000];
+    unsigned char tmp[2][300];
     int tmpl[2];
     tmpl[0] = BN_bn2bin(r->n, tmp[0]);
     tmpl[1] = BN_bn2bin(r->e, tmp[1]);
-    unsigned char blo[2][2000];
+    unsigned char blo[2][500];
     EVP_EncodeBlock(blo[0], tmp[0], tmpl[0]);
     EVP_EncodeBlock(blo[1], tmp[1], tmpl[1]);
     sprintf(res, "<RSAKeyValue><Modulus>%s</Modulus><Exponent>%s</Exponent></RSAKeyValue>", blo[0], blo[1]);
     return 1;
 }
 
+/**
+ * @brief RSAGetPriXml
+ * @param r
+ * @param res 建议大小2000+
+ * @return
+ */
 int RSAGetPriXml(RSA *r, char res[])
 {
-    unsigned char tmp[8][2000];
+    unsigned char tmp[8][300];
     int tmpl[8];
     tmpl[0] = BN_bn2bin(r->n, tmp[0]);
     tmpl[1] = BN_bn2bin(r->e, tmp[1]);
@@ -196,10 +205,22 @@ int RSAGetPriXml(RSA *r, char res[])
     tmpl[5] = BN_bn2bin(r->dmp1, tmp[5]);
     tmpl[6] = BN_bn2bin(r->dmq1, tmp[6]);
     tmpl[7] = BN_bn2bin(r->iqmp, tmp[7]);
-    unsigned char blo[8][2000];
+    unsigned char blo[8][500];
     for(int i=0;i<8;i++)
         EVP_EncodeBlock(blo[i], tmp[i], tmpl[i]);
     sprintf(res, "<RSAKeyValue><Modulus>%s</Modulus><Exponent>%s</Exponent><D>%s</D><P>%s</P><Q>%s</Q><DP>%s</DP><DQ>%s</DQ><InverseQ>%s</InverseQ></RSAKeyValue>",
             blo[0], blo[1], blo[2], blo[3], blo[4], blo[5], blo[6], blo[7]);
+    return 1;
+}
+
+
+
+int xmlkeyToRSA(const char *key, RSA **r)
+{
+    char *ee = "Modulus";
+    char *dd = strcat("<", strcat(ee, ">"));
+    char *kk= strstr(key, dd);
+    int ss = kk - key;
+    printf("%s  %d\n", kk, ss);
     return 1;
 }
