@@ -3,7 +3,7 @@
 /**
  * @brief prikeyToRSA
  * @param str 必须是pem格式,注意在头标后和尾表前保证有一个/n, pkcs1或pcks8都行
- * @param r
+ * @param r 注意!!!调用函数一定要在外部RSA_free(r)!!!
  * @return
  * 注意!!!调用函数一定要在外部RSA_free(r)!!!
  */
@@ -17,8 +17,9 @@ int prikeyToRSA(const char *key, RSA **r){
 /**
  * @brief pubkeyToRSA
  * @param key
- * @param r
+ * @param r 注意!!!调用函数一定要在外部RSA_free(r)!!!
  * @return
+ * 注意!!!调用函数一定要在外部RSA_free(r)!!!
  */
 int pubkeyToRSA(const char *key, RSA **r)
 {
@@ -72,11 +73,11 @@ int RSAGetPKCS8(RSA *r, char res[]){
 /**
  * @brief RSAGetPub
  * @param r
- * @param res 获取公钥，公钥是PEM格式，头部尾部没有RSA关键字
+ * @param res 建议大小2000。获取公钥，公钥是PEM格式，头部尾部没有RSA关键字, SubjectPublicKeyInfo structure
  * @return
  */
-int RSAGetPub(RSA *r, char res[])
-{
+int RSAGetPub(RSA *r, char res[]){
+
     int len;
     BIO *out=BIO_new(BIO_s_mem());
     PEM_write_bio_RSA_PUBKEY(out, r);
@@ -89,10 +90,29 @@ int RSAGetPub(RSA *r, char res[])
 }
 
 /**
+ * @brief RSAGetPubPKCS1
+ * @param r
+ * @param res 建议大小2000
+ * @return
+ */
+int RSAGetPubPKCS1(RSA *r, char res[]){
+
+    int len;
+    BIO *out=BIO_new(BIO_s_mem());
+    PEM_write_bio_RSAPublicKey(out, r);
+    len=BIO_ctrl_pending(out);
+    len = BIO_read(out,res,len);
+    res[len] = '\0';
+    BIO_free(out);
+
+    return 1;
+}
+
+/**
  * @brief RSASignBase64
  * @param r
- * @param type
- * @param sour
+ * @param type hash类型
+ * @param sour 待签名数据
  * @param sourl
  * @param res base64字符串以\0结尾, 因为密钥长度最长256，base64以后应该不会超过500
  * @return
@@ -121,9 +141,9 @@ int RSASignBase64(RSA *r, int type, const unsigned char *sour, int sourl, unsign
 /**
  * @brief RSAVerifyRes
  * @param r
- * @param in  输入的不是base64，是私钥签名后的内容
+ * @param in  私钥签名后的内容，未经base64编码
  * @param inl
- * @param out
+ * @param out 获取签名前的hash值，可将文本hash后对比是否一致
  * @param outl
  * @return
  */
@@ -142,6 +162,14 @@ int RSAVerifyRes(RSA *r, unsigned char *in, int inl, unsigned char out[], int *o
     return 1;
 }
 
+/**
+ * @brief RSAVerifyBase64
+ * @param r
+ * @param in 私钥签名后的内容，经base64编码
+ * @param out
+ * @param outl 获取签名前的hash值，可将文本hash后对比是否一致
+ * @return
+ */
 int RSAVerifyBase64(RSA *r, unsigned char *in, unsigned char out[], int *outl){
 
     unsigned char tmp[500];
@@ -213,14 +241,72 @@ int RSAGetPriXml(RSA *r, char res[])
     return 1;
 }
 
-
-
+/**
+ * @brief xmlkeyToRSA
+ * @param key
+ * @param r 注意!!!调用函数一定要在外部RSA_free(r)!!!
+ * @return
+ * 注意!!!调用函数一定要在外部RSA_free(r)!!!
+ */
 int xmlkeyToRSA(const char *key, RSA **r)
 {
-    char *ee = "Modulus";
-    char *dd = strcat("<", strcat(ee, ">"));
-    char *kk= strstr(key, dd);
-    int ss = kk - key;
-    printf("%s  %d\n", kk, ss);
+    char s[8][15] = {"Modulus", "Exponent", "D", "P", "Q", "DP", "DQ", "InverseQ"};
+    char res[500];
+    unsigned char resdec[8][300];
+    int resdecl[8];
+    int i;
+    for(i=0; i<8; i++){resdecl[i] = 0;}
+    for(i=0; i<8; i++){
+        if(parseXml(s[i], key, res) == 0)
+            break;
+        decodeBase64((unsigned char*)res, resdec[i], &resdecl[i]);
+    }
+    if(*r == NULL){
+        *r = RSA_new();
+    }
+    (*r)->n = BN_new();
+    BN_bin2bn(resdec[0], resdecl[0], (*r)->n);
+    (*r)->e = BN_new();
+    BN_bin2bn(resdec[1], resdecl[1], (*r)->e);
+
+    if(resdecl[2] == 0)
+        return 2;
+
+    (*r)->d = BN_new();
+    BN_bin2bn(resdec[2], resdecl[2], (*r)->d);
+    (*r)->p = BN_new();
+    BN_bin2bn(resdec[3], resdecl[3], (*r)->p);
+    (*r)->q = BN_new();
+    BN_bin2bn(resdec[4], resdecl[4], (*r)->q);
+    (*r)->dmp1 = BN_new();
+    BN_bin2bn(resdec[5], resdecl[5], (*r)->dmp1);
+    (*r)->dmq1 = BN_new();
+    BN_bin2bn(resdec[6], resdecl[6], (*r)->dmq1);
+    (*r)->iqmp = BN_new();
+    BN_bin2bn(resdec[7], resdecl[7], (*r)->iqmp);
     return 1;
 }
+
+
+/**
+ * @brief parseXml
+ * @param keyword 标签值无需带尖括号
+ * @param str 待查串
+ * @param res 建议大小500,因为256位的编程64不会超过500
+ * @return 取标签值中间的值返回
+ */
+int parseXml(const char* keyword, const char *str, char res[]){
+    char st[19], et[19];
+    sprintf(st, "<%s>", keyword);
+    sprintf(et, "</%s>", keyword);
+    char *ds = strstr(str, st);
+    if(ds == NULL){return 0;}
+    ds += strlen(st);
+    char *de = strstr(str, et);
+    if(de == NULL){return 0;}
+    strncpy(res, ds, de - ds);
+    res[de-ds] = '\0';//源码显示strncpy当n先走完时不会自动加\0,除非source先走完才会加\0
+    return 1;
+}
+
+

@@ -33,13 +33,49 @@ int main()
 //        printf("%02x ", reee[i]);
 //    }
 
-    char *trr = "<RSAKeyValue><Modulus>1</Modulus><Exponent>2</Exponent><D>3</D><P>4</P><Q>5</Q><DP>6</DP><DQ>7</DQ><InverseQ>8</InverseQ></RSAKeyValue>";
+    char *trr = "<RSAKeyValue><Modulus>sadfewerwe</Modulus><Exponent>2</Exponent><D>3</D><P>4</P><Q>5</Q><DP>6</DP><DQ>7</DQ><InverseQ>8</InverseQ></RSAKeyValue>";
+    char *xmlkey = "<RSAKeyValue><Modulus>yYEHzg7Qjc/xz2ZRefG6DEkveXDe7ZlC/8z5F4jJdfyvE5Njf3iR66RBt/EFaKTYZWokcTTeFjpUX+QylEqArR/gfVqG6HVXMlAO00ABJua2ZDzaNeP1Ew1Q7KpeLoFvIYrN/DK+J+D31FvflRVh6UyCBW0dFfuTU9hEIhJwh8ZwWIEJUmuyb6YXLMSkkbF2f/iOA6EbnQ36e9Z605uIDnorjFFcyDhfkv5QjwRig18sryQDgKMbg/HQdMnqITJJ+dFZ7xizBukJiwBOdBhOgQAdD/hLxo9eDYLBP7YS84Zw0YJivQn5+Sjg1LX5rJlwm7l0rIlb3lL7CpW+Fj12FQ==</Modulus><P>5+x6PuLovFyHRf3HnoBpcG0J/b25EJymXoP0lz/y53/VcZRPAi7i82y5gN9FmI7VktoG3Da/xX798PTRqCT/dMtdkS1NoPJaUTmyzeXdsZsEZkCBf3YPuCkbXi4BX63C7ki3I/P3H1giV/yXuDKiBzNuH1WEyqibtxBwD0seQbc=</P><Q>3mwhJgvB0MzRZ+Cyqila3UAd49uOYuHQUfwS++kzKAQYLaaDRLLydGlnleXdkh8xw+HCTlttMaWy982vvo/wbmU4a9sAmsW0g+U8TfeKlDss0bND0/Qmc76vKkvInoEVaxgZrZC2VS4QtviMhOnrApTtnAW8zoo8iH0LsReIFpM=</Q><DP>zGNfKGSYbsesf0Yz0b+hLG8ryu6UVct34vuvZkv5KYNC+6GUL3xajeRXZvddQiE+nvh96zxkrQxJhzx6OBDDAI7omrSuIRTz+3k51rKpOYg/zE000rudBtNTRyCMHWHo1E5I9+pc8sadHaWBn9cfa/ErL3oSWPdWo3JdD11IAOk=</DP><DQ>0+GPxm2GyYCDr4AW0xCoNYJhtvEtd7cDu0X1U7J4ABO+cKZiACyz2P+cJOifpRZAUwiaEAj6QURG89cmJtN5x8B2+g/bSJUz/D2AsAkzIzgn3u/1mlDH3JT2ysT8rTnsjGOd+oCToRtL4vFs8yTeskvq+ilhDiQTvDXa0G3JPy8=</DQ>"
+            "<InverseQ>i0eO/qvo7n3OqJpOglU8sLy4agW3+ZX9JL8HvBwCdDtF/UT6WkFnfGBERVEOOVilEW50IJ0x39VbG8xlpYtM8kVOD1OcY1IBi6BvHD+ag+J0X6Q1cPWSSxXX3U9+0iQFxK/CxOwNDkCyCQjRLEWaglITydUAxZle/tGbJ0/ubJo=</InverseQ>"
+            "<D>Lz+RG/D/V/FFavM78ZMLo+vZNOmRbDb+rcpbMfiB/Kd2SenKb85OsOk/+6iJMyNMFmOQDfduh9m/hQiWD410pKOP2PTMI1+4RXTeNQyR+JQqelCGfhJomcIKkqPUF6WD8GKCsDsZuXIXynSMdYGhBrpI1oriQhBOWF+igja+qickEXvAUx+r5NMr+Q6YhEZoxx3k/77sG9gvodq/GYoX7KzODiH1eaMFIgThkwO7Oswwv7IyoZ+UIb2vVm+IWW8seMzxmLAqz5N8rUZPDWRTc/G1aSpOcCD+EDglH8uehwunNWZ9fbC8HdukDX83rrMpvTABzxw7ekf6BHh+s4iglQ==</D>"
+            "<Exponent>AQAB</Exponent>"
+        "</RSAKeyValue>";
+
+    char *xmlpubkey = "<RSAKeyValue><Modulus>yYEHzg7Qjc/xz2ZRefG6DEkveXDe7ZlC/8z5F4jJdfyvE5Njf3iR66RBt/EFaKTYZWokcTTeFjpUX+QylEqArR/gfVqG6HVXMlAO00ABJua2ZDzaNeP1Ew1Q7KpeLoFvIYrN/DK+J+D31FvflRVh6UyCBW0dFfuTU9hEIhJwh8ZwWIEJUmuyb6YXLMSkkbF2f/iOA6EbnQ36e9Z605uIDnorjFFcyDhfkv5QjwRig18sryQDgKMbg/HQdMnqITJJ+dFZ7xizBukJiwBOdBhOgQAdD/hLxo9eDYLBP7YS84Zw0YJivQn5+Sjg1LX5rJlwm7l0rIlb3lL7CpW+Fj12FQ==</Modulus>"
+            "<Exponent>AQAB</Exponent>"
+        "</RSAKeyValue>";
 
     char tmmp[2000];
     unsigned char baseout[20000];
     int tmpl, outl;
+    char *ss;
 
-    xmlkeyToRSA(trr, &r);
+    for(i=0;i<2000;i++){
+        tmmp[i]= 97;
+    }
+
+    printf("%d\n", xmlkeyToRSA(xmlkey, &r));
+    RSAGetPub(r, tmmp);
+    printf("%s\n", tmmp);
+
+    RSAGetPubPKCS1(r, tmmp);
+    printf("%s\n", tmmp);
+
+//    BIGNUM *ret1,*ret2;
+//    ret1=BN_new();
+//    BN_bin2bn((unsigned char *)"242424ab",8, ret1);
+//    ret2=BN_bin2bn((unsigned char *)"242424ab",8,NULL);
+//    int kt = BN_bn2bin(ret1, baseout);
+//    printf("%d\n", kt);
+//    BN_free(ret1);
+//    BN_free(ret2);
+
+//    pubkeyToRSA(keypub, &r);
+//    printf("%x", r->d);
+
+//    xmlkeyToRSA(xmlkey, &r);
+//    tmpl = RSA_check_key(r);
+//    printf("%d\n", tmpl);
+
 
 //    prikeyToRSA(key, &r);
 
