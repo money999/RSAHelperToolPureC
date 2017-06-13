@@ -53,12 +53,16 @@ int main()
         tmmp[i]= 97;
     }
 
-    printf("%d\n", xmlkeyToRSA(xmlkey, &r));
-    RSAGetPub(r, tmmp);
-    printf("%s\n", tmmp);
+    printf("%d\n", decodeBase64((unsigned char *)key, baseout, &tmpl));
+    printf("%d\n", tmpl);
 
-    RSAGetPubPKCS1(r, tmmp);
-    printf("%s\n", tmmp);
+
+//    printf("%d\n", xmlkeyToRSA(xmlkey, &r));
+//    RSAGetPub(r, tmmp);
+//    printf("%s\n", tmmp);
+
+//    RSAGetPubPKCS1(r, tmmp);
+//    printf("%s\n", tmmp);
 
 //    BIGNUM *ret1,*ret2;
 //    ret1=BN_new();

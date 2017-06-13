@@ -11,6 +11,7 @@ int prikeyToRSA(const char *key, RSA **r){
     BIO *keybio = BIO_new_mem_buf(key, -1);
     *r = PEM_read_bio_RSAPrivateKey(keybio, r,NULL, NULL);
     BIO_free(keybio);
+    if(*r == NULL) return 0;
     return 1;
 }
 
@@ -26,6 +27,7 @@ int pubkeyToRSA(const char *key, RSA **r)
     BIO *keybio = BIO_new_mem_buf(key, -1);
     *r = PEM_read_bio_RSA_PUBKEY(keybio, r, NULL, NULL);
     BIO_free(keybio);
+    if(*r == NULL) return 0;
     return 1;
 }
 
@@ -36,13 +38,14 @@ int pubkeyToRSA(const char *key, RSA **r)
  * @return
  */
 int RSAGetPKCS1(RSA *r, char res[]){
+    if(r == NULL || RSA_check_key(r) == 0) return 0;
+
     int len;
     BIO *out=BIO_new(BIO_s_mem());
     PEM_write_bio_RSAPrivateKey(out,r,NULL,NULL,0,NULL,NULL);
     len=BIO_ctrl_pending(out);
     BIO_read(out,res,len);
     res[len] = '\0';
-
     BIO_free(out);
 
     return 1;
@@ -55,6 +58,8 @@ int RSAGetPKCS1(RSA *r, char res[]){
  * @return
  */
 int RSAGetPKCS8(RSA *r, char res[]){
+    if(r == NULL || RSA_check_key(r) == 0) return 0;
+
     int len;
     BIO *out=BIO_new(BIO_s_mem());
     EVP_PKEY *k = EVP_PKEY_new();
@@ -77,6 +82,7 @@ int RSAGetPKCS8(RSA *r, char res[]){
  * @return
  */
 int RSAGetPub(RSA *r, char res[]){
+    if(r == NULL || r->n == NULL || r->e == NULL) return 0;
 
     int len;
     BIO *out=BIO_new(BIO_s_mem());
@@ -96,7 +102,7 @@ int RSAGetPub(RSA *r, char res[]){
  * @return
  */
 int RSAGetPubPKCS1(RSA *r, char res[]){
-
+    if(r == NULL || r->n == NULL || r->e == NULL) return 0;
     int len;
     BIO *out=BIO_new(BIO_s_mem());
     PEM_write_bio_RSAPublicKey(out, r);
@@ -112,12 +118,13 @@ int RSAGetPubPKCS1(RSA *r, char res[]){
  * @brief RSASignBase64
  * @param r
  * @param type hash类型
- * @param sour 待签名数据
+ * @param sour 待签名数据, 未hash
  * @param sourl
  * @param res base64字符串以\0结尾, 因为密钥长度最长256，base64以后应该不会超过500
  * @return
  */
 int RSASignBase64(RSA *r, int type, const unsigned char *sour, int sourl, unsigned char res[]){
+    if(r == NULL || RSA_check_key(r) == 0) return 0;
 
     unsigned char hashStr[100], f[300];
     unsigned int flen;
@@ -148,6 +155,7 @@ int RSASignBase64(RSA *r, int type, const unsigned char *sour, int sourl, unsign
  * @return
  */
 int RSAVerifyRes(RSA *r, unsigned char *in, int inl, unsigned char out[], int *outl){
+    if(r == NULL || r->n == NULL || r->e == NULL) return 0;
 
     X509_SIG *sig = NULL;
     unsigned char *s;
@@ -171,6 +179,7 @@ int RSAVerifyRes(RSA *r, unsigned char *in, int inl, unsigned char out[], int *o
  * @return
  */
 int RSAVerifyBase64(RSA *r, unsigned char *in, unsigned char out[], int *outl){
+    if(r == NULL || r->n == NULL || r->e == NULL) return 0;
 
     unsigned char tmp[500];
     int tmpl;
@@ -191,6 +200,7 @@ int decodeBase64(const unsigned char *in, unsigned char out[], int *outl){
     int tmpl, inl;
     inl = strlen((const char*)in);
     tmpl = EVP_DecodeBlock(out, in, inl);
+    if(tmpl == -1) return 0;
     while(in[--inl] == '=') tmpl--;
     *outl = tmpl;
     return 1;
@@ -204,6 +214,7 @@ int decodeBase64(const unsigned char *in, unsigned char out[], int *outl){
  */
 int RSAGetPubXml(RSA *r, char res[])
 {
+    if(r == NULL || r->n == NULL || r->e == NULL) return 0;
     unsigned char tmp[2][300];
     int tmpl[2];
     tmpl[0] = BN_bn2bin(r->n, tmp[0]);
@@ -223,6 +234,7 @@ int RSAGetPubXml(RSA *r, char res[])
  */
 int RSAGetPriXml(RSA *r, char res[])
 {
+    if(r == NULL || RSA_check_key(r) == 0) return 0;
     unsigned char tmp[8][300];
     int tmpl[8];
     tmpl[0] = BN_bn2bin(r->n, tmp[0]);
@@ -261,6 +273,7 @@ int xmlkeyToRSA(const char *key, RSA **r)
             break;
         decodeBase64((unsigned char*)res, resdec[i], &resdecl[i]);
     }
+    if(i!=2 || i!=8) return 0;
     if(*r == NULL){
         *r = RSA_new();
     }
@@ -269,7 +282,7 @@ int xmlkeyToRSA(const char *key, RSA **r)
     (*r)->e = BN_new();
     BN_bin2bn(resdec[1], resdecl[1], (*r)->e);
 
-    if(resdecl[2] == 0)
+    if(i == 2)
         return 2;
 
     (*r)->d = BN_new();
