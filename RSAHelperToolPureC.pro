@@ -1,12 +1,14 @@
+
+QT += core gui
 TEMPLATE = app
-CONFIG += console c++11
-CONFIG -= app_bundle
-CONFIG -= qt
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     applink.c \
     helper.cpp \
-    main.cpp
+    main.cpp \
+    dialog.cpp
 
 #LIBS += -L"D:/OpenSSL-Win32/lib/MinGW" -llibeay32
 #LIBS += -L"D:/OpenSSL-Win32/lib/MinGW" -lssleay32
@@ -19,5 +21,6 @@ LIBS += -L"D:/OpenSSL-Win32/lib/MinGW" -llibcrypto-1_1
 INCLUDEPATH += $$quote(D:/OpenSSL-Win32/include)
 
 HEADERS += \
-    helper.h
+    helper.h \
+    dialog.h
 

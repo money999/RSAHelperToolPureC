@@ -1,60 +1,69 @@
-#include <openssl/pem.h>
-#include <openssl/aes.h>
-#include <openssl/md5.h>
-#include <openssl/x509.h>
-#include <openssl/objects.h>
-#include <openssl/rsa.h>
-#include <openssl/bn.h>
-#include <openssl/rsa.h>
-#include <openssl/objects.h>
-#include <openssl/x509.h>
-#include<string.h>
-#include "helper.h"
+//#include <openssl/pem.h>
+//#include <openssl/aes.h>
+//#include <openssl/md5.h>
+//#include <openssl/x509.h>
+//#include <openssl/objects.h>
+//#include <openssl/rsa.h>
+//#include <openssl/bn.h>
+//#include <openssl/rsa.h>
+//#include <openssl/objects.h>
+//#include <openssl/x509.h>
+//#include<string.h>
+//#include "helper.h"
+#include "dialog.h"
+#include <QApplication>
 
 
-int main()
+int main(int argc, char *argv[])
 {
-    RSA  *r=NULL , *rp= NULL;
-    int  i,bits=512;
-    unsigned long  e=RSA_F4;
-    int len=0, flen, padding;
-    EVP_PKEY *k = NULL;
-    unsigned char reee[2000], reek[2000], rekk[2000];
-    char key[]= "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDJgQfODtCNz/HP"
-                                             "ZlF58boMSS95cN7tmUL/zPkXiMl1/K8Tk2N/eJHrpEG38QVopNhlaiRxNN4WOlRf"
-                "                            5DKUSoCtH+B9WobodVcyUA7TQAEm5rZkPNo14/UTDVDsql4ugW8his38Mr4n4PfUW9+VFWHpTIIFbR0V+5NT2EQiEnCHxnBYgQlSa7JvphcsxKSRsXZ/+I4DoRudDfp71nrTm4gOeiuMUVzIOF+S/lCPBGKDXyyvJAOAoxuD8dB0yeohMkn50VnvGLMG6QmLAE50GE6BAB0P+EvGj14NgsE/thLzhnDRgmK9Cfn5KODUtfmsmXCbuXSsiVveUvsKlb4WPXYVAgMBAAECggEALz+RG/D/V/FFavM78ZMLo+vZNOmRbDb+rcpbMfiB/Kd2SenKb85OsOk/+6iJMyNMFmOQDfduh9m/hQiWD410pKOP2PTMI1+4RXTeNQyR+JQqelCGfhJomcIKkqPUF6WD8GKCsDsZuXIXynSMdYGhBrpI1oriQhBOWF+igja+qickEXvAUx+r5NMr+Q6YhEZoxx3k/77sG9gvodq/GYoX7KzODiH1eaMFIgThkwO7Oswwv7IyoZ+UIb2vVm+IWW8seMzxmLAqz5N8rUZPDWRTc/G1aSpOcCD+EDglH8uehwunNWZ9fbC8HdukDX83rrMpvTABzxw7ekf6BHh+s4iglQKBgQDn7Ho+4ui8XIdF/ceegGlwbQn9vbkQnKZeg/SXP/Lnf9VxlE8CLuLzbLmA30WYjtWS2gbcNr/Ffv3w9NGoJP90y12RLU2g8lpRObLN5d2xmwRmQIF/dg+4KRteLgFfrcLuSLcj8/cfWCJX/Je4MqIHM24fVYTKqJu3EHAPSx5BtwKBgQDebCEmC8HQzNFn4LKqKVrdQB3j245i4dBR/BL76TMoBBgtpoNEsvJ0aWeV5d2SHzHD4cJOW20xpbL3za++j/BuZThr2wCaxbSD5TxN94qUOyzRs0PT9CZzvq8qS8iegRVrGBmtkLZVLhC2+IyE6esClO2cBbzOijyIfQuxF4gWkwKBgQDMY18oZJhux6x/RjPRv6EsbyvK7pRVy3fi+69mS/kpg0L7oZQvfFqN5Fdm911CIT6e+H3rPGStDEmHPHo4EMMAjuiatK4hFPP7eTnWsqk5iD/MTTTSu50G01NHIIwdYejUTkj36lzyxp0dpYGf1x9r8SsvehJY91ajcl0PXUgA6QKBgQDT4Y/GbYbJgIOvgBbTEKg1gmG28S13twO7RfVTsngAE75wpmIALLPY/5wk6J+lFkBTCJoQCPpBREbz1yYm03nHwHb6D9tIlTP8PYCwCTMjOCfe7/WaUMfclPbKxPytOeyMY536gJOhG0vi8WzzJN6yS+r6KWEOJBO8NdrQbck/LwKBgQCLR47+q+jufc6omk6CVTywvLhqBbf5lf0kvwe8HAJ0O0X9RPpaQWd8YERFUQ45WKURbnQgnTHf1VsbzGWli0zyRU4PU5xjUgGLoG8cP5qD4nRfpDVw9ZJLFdfdT37SJAXEr8LE7A0OQLIJCNEsRZqCUhPJ1QDFmV7+0ZsnT+5smg==\n-----END PRIVATE KEY-----";
+    QApplication a(argc, argv);
+    Dialog w;
+    w.show();
 
-    char keypub[]="-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhg95T1QpdKD8OWjm5yZ2mIFV4Phe7czOzn9YtOufK1qMZ8fZEyjpoXBLq+4d+pHj6DCAX7pqZMqu8Jjr7u7yfx+CxEO0PtD4T9WPnZOcwhWLntLhzs666hjRob7iGb/T5H/if+leyVoRJir93WJLkqHl2jBW52hHsnjIl/4f5tfN/6XcaODU5Ia67TcZybXGXfYuP3VC+yYhV3CeXGtTsfIfKzgjIU/ugPrAhv26f2rDgsgAQNh0Hc91IGrbSyLy+pGcf+XYyU8/zNGRs8VSnmMR+xqmdvISDVKPGtxrvhwWOpKDyZjSKOnSxk6wM7/Oic51ggrfvlTVD41JoXMWAwIDAQAB\n-----END PUBLIC KEY-----";
-    char sign[]="FT8KEDsVvAErl4eOpcEgG5R6R+WjPrI3ieLNxrs1NGrOV88gCKCUIdO6KVFzDWv3w7PY/fv5K4lJ2/EClJPfqfSWG4MN1XdOAlMGOcOWJ2CXmksiZ6EC+2kHb4atDTnz5xC8uZTznFvxTJkh7cQbFOBNf+qSCO/0ZxoblGCYoF6u9nnxdA04JS29HrPkgG1+uCqLXNjhszDFEc6hXzfr9iIqyqGBPhxL+AGaEsNzEA9DL0x/dl0CDWKglStabmanlNPMFQ0SfXI43fYbTTr2yYBTpLkkIwAo2lakYbIoDelztv1H8TiamJ/PFg2AhqS2e3WN8z758mLhtQLEhGjrCQ==";
-    char ssss[] = "{\"flag\":2222,\"mapString\":{},\"date\":\"2017-06-09 14:28:25\",\"listDiyClass\":[],\"mapDiyClass\":{},\"listString\":[]}";
+    return a.exec();
+}
+
+//    RSA  *r=NULL , *rp= NULL;
+//    int  i,bits=512;
+//    unsigned long  e=RSA_F4;
+//    int len=0, flen, padding;
+//    EVP_PKEY *k = NULL;
+//    unsigned char reee[2000], reek[2000], rekk[2000];
+//    char key[]= "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDJgQfODtCNz/HP"
+//                                             "ZlF58boMSS95cN7tmUL/zPkXiMl1/K8Tk2N/eJHrpEG38QVopNhlaiRxNN4WOlRf"
+//                "                            5DKUSoCtH+B9WobodVcyUA7TQAEm5rZkPNo14/UTDVDsql4ugW8his38Mr4n4PfUW9+VFWHpTIIFbR0V+5NT2EQiEnCHxnBYgQlSa7JvphcsxKSRsXZ/+I4DoRudDfp71nrTm4gOeiuMUVzIOF+S/lCPBGKDXyyvJAOAoxuD8dB0yeohMkn50VnvGLMG6QmLAE50GE6BAB0P+EvGj14NgsE/thLzhnDRgmK9Cfn5KODUtfmsmXCbuXSsiVveUvsKlb4WPXYVAgMBAAECggEALz+RG/D/V/FFavM78ZMLo+vZNOmRbDb+rcpbMfiB/Kd2SenKb85OsOk/+6iJMyNMFmOQDfduh9m/hQiWD410pKOP2PTMI1+4RXTeNQyR+JQqelCGfhJomcIKkqPUF6WD8GKCsDsZuXIXynSMdYGhBrpI1oriQhBOWF+igja+qickEXvAUx+r5NMr+Q6YhEZoxx3k/77sG9gvodq/GYoX7KzODiH1eaMFIgThkwO7Oswwv7IyoZ+UIb2vVm+IWW8seMzxmLAqz5N8rUZPDWRTc/G1aSpOcCD+EDglH8uehwunNWZ9fbC8HdukDX83rrMpvTABzxw7ekf6BHh+s4iglQKBgQDn7Ho+4ui8XIdF/ceegGlwbQn9vbkQnKZeg/SXP/Lnf9VxlE8CLuLzbLmA30WYjtWS2gbcNr/Ffv3w9NGoJP90y12RLU2g8lpRObLN5d2xmwRmQIF/dg+4KRteLgFfrcLuSLcj8/cfWCJX/Je4MqIHM24fVYTKqJu3EHAPSx5BtwKBgQDebCEmC8HQzNFn4LKqKVrdQB3j245i4dBR/BL76TMoBBgtpoNEsvJ0aWeV5d2SHzHD4cJOW20xpbL3za++j/BuZThr2wCaxbSD5TxN94qUOyzRs0PT9CZzvq8qS8iegRVrGBmtkLZVLhC2+IyE6esClO2cBbzOijyIfQuxF4gWkwKBgQDMY18oZJhux6x/RjPRv6EsbyvK7pRVy3fi+69mS/kpg0L7oZQvfFqN5Fdm911CIT6e+H3rPGStDEmHPHo4EMMAjuiatK4hFPP7eTnWsqk5iD/MTTTSu50G01NHIIwdYejUTkj36lzyxp0dpYGf1x9r8SsvehJY91ajcl0PXUgA6QKBgQDT4Y/GbYbJgIOvgBbTEKg1gmG28S13twO7RfVTsngAE75wpmIALLPY/5wk6J+lFkBTCJoQCPpBREbz1yYm03nHwHb6D9tIlTP8PYCwCTMjOCfe7/WaUMfclPbKxPytOeyMY536gJOhG0vi8WzzJN6yS+r6KWEOJBO8NdrQbck/LwKBgQCLR47+q+jufc6omk6CVTywvLhqBbf5lf0kvwe8HAJ0O0X9RPpaQWd8YERFUQ45WKURbnQgnTHf1VsbzGWli0zyRU4PU5xjUgGLoG8cP5qD4nRfpDVw9ZJLFdfdT37SJAXEr8LE7A0OQLIJCNEsRZqCUhPJ1QDFmV7+0ZsnT+5smg==\n-----END PRIVATE KEY-----";
+
+//    char keypub[]="-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhg95T1QpdKD8OWjm5yZ2mIFV4Phe7czOzn9YtOufK1qMZ8fZEyjpoXBLq+4d+pHj6DCAX7pqZMqu8Jjr7u7yfx+CxEO0PtD4T9WPnZOcwhWLntLhzs666hjRob7iGb/T5H/if+leyVoRJir93WJLkqHl2jBW52hHsnjIl/4f5tfN/6XcaODU5Ia67TcZybXGXfYuP3VC+yYhV3CeXGtTsfIfKzgjIU/ugPrAhv26f2rDgsgAQNh0Hc91IGrbSyLy+pGcf+XYyU8/zNGRs8VSnmMR+xqmdvISDVKPGtxrvhwWOpKDyZjSKOnSxk6wM7/Oic51ggrfvlTVD41JoXMWAwIDAQAB\n-----END PUBLIC KEY-----";
+//    char sign[]="FT8KEDsVvAErl4eOpcEgG5R6R+WjPrI3ieLNxrs1NGrOV88gCKCUIdO6KVFzDWv3w7PY/fv5K4lJ2/EClJPfqfSWG4MN1XdOAlMGOcOWJ2CXmksiZ6EC+2kHb4atDTnz5xC8uZTznFvxTJkh7cQbFOBNf+qSCO/0ZxoblGCYoF6u9nnxdA04JS29HrPkgG1+uCqLXNjhszDFEc6hXzfr9iIqyqGBPhxL+AGaEsNzEA9DL0x/dl0CDWKglStabmanlNPMFQ0SfXI43fYbTTr2yYBTpLkkIwAo2lakYbIoDelztv1H8TiamJ/PFg2AhqS2e3WN8z758mLhtQLEhGjrCQ==";
+//    char ssss[] = "{\"flag\":2222,\"mapString\":{},\"date\":\"2017-06-09 14:28:25\",\"listDiyClass\":[],\"mapDiyClass\":{},\"listString\":[]}";
 
 //    SHA1((unsigned char *)ssss, strlen(ssss), reee);
 //    for(i=0;i<SHA_DIGEST_LENGTH;i++){
 //        printf("%02x ", reee[i]);
 //    }
 
-    char *trr = "<RSAKeyValue><Modulus>sadfewerwe</Modulus><Exponent>2</Exponent><D>3</D><P>4</P><Q>5</Q><DP>6</DP><DQ>7</DQ><InverseQ>8</InverseQ></RSAKeyValue>";
-    char *xmlkey = "<RSAKeyValue><Modulus>yYEHzg7Qjc/xz2ZRefG6DEkveXDe7ZlC/8z5F4jJdfyvE5Njf3iR66RBt/EFaKTYZWokcTTeFjpUX+QylEqArR/gfVqG6HVXMlAO00ABJua2ZDzaNeP1Ew1Q7KpeLoFvIYrN/DK+J+D31FvflRVh6UyCBW0dFfuTU9hEIhJwh8ZwWIEJUmuyb6YXLMSkkbF2f/iOA6EbnQ36e9Z605uIDnorjFFcyDhfkv5QjwRig18sryQDgKMbg/HQdMnqITJJ+dFZ7xizBukJiwBOdBhOgQAdD/hLxo9eDYLBP7YS84Zw0YJivQn5+Sjg1LX5rJlwm7l0rIlb3lL7CpW+Fj12FQ==</Modulus><P>5+x6PuLovFyHRf3HnoBpcG0J/b25EJymXoP0lz/y53/VcZRPAi7i82y5gN9FmI7VktoG3Da/xX798PTRqCT/dMtdkS1NoPJaUTmyzeXdsZsEZkCBf3YPuCkbXi4BX63C7ki3I/P3H1giV/yXuDKiBzNuH1WEyqibtxBwD0seQbc=</P><Q>3mwhJgvB0MzRZ+Cyqila3UAd49uOYuHQUfwS++kzKAQYLaaDRLLydGlnleXdkh8xw+HCTlttMaWy982vvo/wbmU4a9sAmsW0g+U8TfeKlDss0bND0/Qmc76vKkvInoEVaxgZrZC2VS4QtviMhOnrApTtnAW8zoo8iH0LsReIFpM=</Q><DP>zGNfKGSYbsesf0Yz0b+hLG8ryu6UVct34vuvZkv5KYNC+6GUL3xajeRXZvddQiE+nvh96zxkrQxJhzx6OBDDAI7omrSuIRTz+3k51rKpOYg/zE000rudBtNTRyCMHWHo1E5I9+pc8sadHaWBn9cfa/ErL3oSWPdWo3JdD11IAOk=</DP><DQ>0+GPxm2GyYCDr4AW0xCoNYJhtvEtd7cDu0X1U7J4ABO+cKZiACyz2P+cJOifpRZAUwiaEAj6QURG89cmJtN5x8B2+g/bSJUz/D2AsAkzIzgn3u/1mlDH3JT2ysT8rTnsjGOd+oCToRtL4vFs8yTeskvq+ilhDiQTvDXa0G3JPy8=</DQ>"
-            "<InverseQ>i0eO/qvo7n3OqJpOglU8sLy4agW3+ZX9JL8HvBwCdDtF/UT6WkFnfGBERVEOOVilEW50IJ0x39VbG8xlpYtM8kVOD1OcY1IBi6BvHD+ag+J0X6Q1cPWSSxXX3U9+0iQFxK/CxOwNDkCyCQjRLEWaglITydUAxZle/tGbJ0/ubJo=</InverseQ>"
-            "<D>Lz+RG/D/V/FFavM78ZMLo+vZNOmRbDb+rcpbMfiB/Kd2SenKb85OsOk/+6iJMyNMFmOQDfduh9m/hQiWD410pKOP2PTMI1+4RXTeNQyR+JQqelCGfhJomcIKkqPUF6WD8GKCsDsZuXIXynSMdYGhBrpI1oriQhBOWF+igja+qickEXvAUx+r5NMr+Q6YhEZoxx3k/77sG9gvodq/GYoX7KzODiH1eaMFIgThkwO7Oswwv7IyoZ+UIb2vVm+IWW8seMzxmLAqz5N8rUZPDWRTc/G1aSpOcCD+EDglH8uehwunNWZ9fbC8HdukDX83rrMpvTABzxw7ekf6BHh+s4iglQ==</D>"
-            "<Exponent>AQAB</Exponent>"
-        "</RSAKeyValue>";
+//    char *trr = "<RSAKeyValue><Modulus>sadfewerwe</Modulus><Exponent>2</Exponent><D>3</D><P>4</P><Q>5</Q><DP>6</DP><DQ>7</DQ><InverseQ>8</InverseQ></RSAKeyValue>";
+//    char *xmlkey = "<RSAKeyValue><Modulus>yYEHzg7Qjc/xz2ZRefG6DEkveXDe7ZlC/8z5F4jJdfyvE5Njf3iR66RBt/EFaKTYZWokcTTeFjpUX+QylEqArR/gfVqG6HVXMlAO00ABJua2ZDzaNeP1Ew1Q7KpeLoFvIYrN/DK+J+D31FvflRVh6UyCBW0dFfuTU9hEIhJwh8ZwWIEJUmuyb6YXLMSkkbF2f/iOA6EbnQ36e9Z605uIDnorjFFcyDhfkv5QjwRig18sryQDgKMbg/HQdMnqITJJ+dFZ7xizBukJiwBOdBhOgQAdD/hLxo9eDYLBP7YS84Zw0YJivQn5+Sjg1LX5rJlwm7l0rIlb3lL7CpW+Fj12FQ==</Modulus><P>5+x6PuLovFyHRf3HnoBpcG0J/b25EJymXoP0lz/y53/VcZRPAi7i82y5gN9FmI7VktoG3Da/xX798PTRqCT/dMtdkS1NoPJaUTmyzeXdsZsEZkCBf3YPuCkbXi4BX63C7ki3I/P3H1giV/yXuDKiBzNuH1WEyqibtxBwD0seQbc=</P><Q>3mwhJgvB0MzRZ+Cyqila3UAd49uOYuHQUfwS++kzKAQYLaaDRLLydGlnleXdkh8xw+HCTlttMaWy982vvo/wbmU4a9sAmsW0g+U8TfeKlDss0bND0/Qmc76vKkvInoEVaxgZrZC2VS4QtviMhOnrApTtnAW8zoo8iH0LsReIFpM=</Q><DP>zGNfKGSYbsesf0Yz0b+hLG8ryu6UVct34vuvZkv5KYNC+6GUL3xajeRXZvddQiE+nvh96zxkrQxJhzx6OBDDAI7omrSuIRTz+3k51rKpOYg/zE000rudBtNTRyCMHWHo1E5I9+pc8sadHaWBn9cfa/ErL3oSWPdWo3JdD11IAOk=</DP><DQ>0+GPxm2GyYCDr4AW0xCoNYJhtvEtd7cDu0X1U7J4ABO+cKZiACyz2P+cJOifpRZAUwiaEAj6QURG89cmJtN5x8B2+g/bSJUz/D2AsAkzIzgn3u/1mlDH3JT2ysT8rTnsjGOd+oCToRtL4vFs8yTeskvq+ilhDiQTvDXa0G3JPy8=</DQ>"
+//            "<InverseQ>i0eO/qvo7n3OqJpOglU8sLy4agW3+ZX9JL8HvBwCdDtF/UT6WkFnfGBERVEOOVilEW50IJ0x39VbG8xlpYtM8kVOD1OcY1IBi6BvHD+ag+J0X6Q1cPWSSxXX3U9+0iQFxK/CxOwNDkCyCQjRLEWaglITydUAxZle/tGbJ0/ubJo=</InverseQ>"
+//            "<D>Lz+RG/D/V/FFavM78ZMLo+vZNOmRbDb+rcpbMfiB/Kd2SenKb85OsOk/+6iJMyNMFmOQDfduh9m/hQiWD410pKOP2PTMI1+4RXTeNQyR+JQqelCGfhJomcIKkqPUF6WD8GKCsDsZuXIXynSMdYGhBrpI1oriQhBOWF+igja+qickEXvAUx+r5NMr+Q6YhEZoxx3k/77sG9gvodq/GYoX7KzODiH1eaMFIgThkwO7Oswwv7IyoZ+UIb2vVm+IWW8seMzxmLAqz5N8rUZPDWRTc/G1aSpOcCD+EDglH8uehwunNWZ9fbC8HdukDX83rrMpvTABzxw7ekf6BHh+s4iglQ==</D>"
+//            "<Exponent>AQAB</Exponent>"
+//        "</RSAKeyValue>";
 
-    char *xmlpubkey = "<RSAKeyValue><Modulus>yYEHzg7Qjc/xz2ZRefG6DEkveXDe7ZlC/8z5F4jJdfyvE5Njf3iR66RBt/EFaKTYZWokcTTeFjpUX+QylEqArR/gfVqG6HVXMlAO00ABJua2ZDzaNeP1Ew1Q7KpeLoFvIYrN/DK+J+D31FvflRVh6UyCBW0dFfuTU9hEIhJwh8ZwWIEJUmuyb6YXLMSkkbF2f/iOA6EbnQ36e9Z605uIDnorjFFcyDhfkv5QjwRig18sryQDgKMbg/HQdMnqITJJ+dFZ7xizBukJiwBOdBhOgQAdD/hLxo9eDYLBP7YS84Zw0YJivQn5+Sjg1LX5rJlwm7l0rIlb3lL7CpW+Fj12FQ==</Modulus>"
-            "<Exponent>AQAB</Exponent>"
-        "</RSAKeyValue>";
+//    char *xmlpubkey = "<RSAKeyValue><Modulus>yYEHzg7Qjc/xz2ZRefG6DEkveXDe7ZlC/8z5F4jJdfyvE5Njf3iR66RBt/EFaKTYZWokcTTeFjpUX+QylEqArR/gfVqG6HVXMlAO00ABJua2ZDzaNeP1Ew1Q7KpeLoFvIYrN/DK+J+D31FvflRVh6UyCBW0dFfuTU9hEIhJwh8ZwWIEJUmuyb6YXLMSkkbF2f/iOA6EbnQ36e9Z605uIDnorjFFcyDhfkv5QjwRig18sryQDgKMbg/HQdMnqITJJ+dFZ7xizBukJiwBOdBhOgQAdD/hLxo9eDYLBP7YS84Zw0YJivQn5+Sjg1LX5rJlwm7l0rIlb3lL7CpW+Fj12FQ==</Modulus>"
+//            "<Exponent>AQAB</Exponent>"
+//        "</RSAKeyValue>";
 
-    char tmmp[2000];
-    unsigned char baseout[20000];
-    int tmpl, outl;
-    char *ss;
+//    char tmmp[2000];
+//    unsigned char baseout[20000];
+//    int tmpl, outl;
+//    char *ss;
 
-    for(i=0;i<2000;i++){
-        tmmp[i]= 97;
-    }
+//    for(i=0;i<2000;i++){
+//        tmmp[i]= 97;
+//    }
 
-    printf("%d\n", decodeBase64((unsigned char *)key, baseout, &tmpl));
-    printf("%d\n", tmpl);
+//    printf("%d\n", decodeBase64((unsigned char *)key, baseout, &tmpl));
+//    printf("%d\n", tmpl);
 
 
 //    printf("%d\n", xmlkeyToRSA(xmlkey, &r));
@@ -225,9 +234,9 @@ int main()
 //        puts("");
 //        printf("%d %d\n", flen, len);
 
-    if(r!=NULL){
-        RSA_free(r);
-    }
+//    if(r!=NULL){
+//        RSA_free(r);
+//    }
 //    if(from)
 //        free(from);
 //    if(to)
@@ -236,8 +245,7 @@ int main()
 //        free(res);
 
 
-    return 0;
-}
+
 
 //unsigned char in[]="money";
 //unsigned char out[500];
