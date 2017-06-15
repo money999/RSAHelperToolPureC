@@ -79,28 +79,31 @@ Dialog::~Dialog()
 
 void Dialog::execTrans()
 {
-    //teT1Show->setText(QString::number(bgT1Radio->checkedId(), 10));
     QByteArray tmpba = teT1Input->toPlainText().toLatin1();
     char *key = tmpba.data();
-
+    RSA *r = NULL;
     if(bgT1Radio->checkedId() == 1){
-        showPrikey();
+        prikeyToRSA(key, &r);
+        showPrikey(r);
     }else if(bgT1Radio->checkedId() == 2){
-        showPubkey();
+        pubkeyToRSA(key, &r);
+        showPubkey(r);
     }else{
-
+        int flag = xmlkeyToRSA(key, &r);
+        qDebug()<<flag;
+        if(flag == 2){
+            showPubkey(r);
+        }else{
+            showPrikey(r);
+        }
     }
+    if(r!=NULL){RSA_free(r);r=NULL;}
 }
 
-QString Dialog::showPubkey()
+void Dialog::showPubkey(RSA *r)
 {
-    QByteArray tmpba = teT1Input->toPlainText().toLatin1();
-    char *key = tmpba.data();
     char res[2000];
     QString show = "";
-    RSA *r = NULL;
-    pubkeyToRSA(key, &r);
-
     RSAGetPub(r, res);
     show += QString(QLatin1Literal(res));
     show += "\n\n";
@@ -111,20 +114,14 @@ QString Dialog::showPubkey()
 
     RSAGetPubXml(r, res);
     show += QString(QLatin1Literal(res));
-
-    RSA_free(r);
     teT1Show->setText(show);
 }
 
-QString Dialog::showPrikey()
+void Dialog::showPrikey(RSA *r)
 {
-    QByteArray tmpba = teT1Input->toPlainText().toLatin1();
-    char *key = tmpba.data();
+
     char res[2000];
     QString show = "";
-    RSA *r = NULL;
-    prikeyToRSA(key, &r);
-
     RSAGetPKCS1(r, res);
     show += QString(QLatin1Literal(res));
     show += "\n\n";
@@ -147,6 +144,5 @@ QString Dialog::showPrikey()
 
     RSAGetPubXml(r, res);
     show += QString(QLatin1Literal(res));
-    RSA_free(r);
     teT1Show->setText(show);
 }

@@ -1,4 +1,5 @@
 #include "helper.h"
+#include <QDebug>
 
 /**
  * @brief prikeyToRSA
@@ -273,7 +274,7 @@ int xmlkeyToRSA(const char *key, RSA **r)
             break;
         decodeBase64((unsigned char*)res, resdec[i], &resdecl[i]);
     }
-    if(i!=2 || i!=8) return 0;
+    if(i!=2 && i!=8){return 0;}
     if(*r == NULL){
         *r = RSA_new();
     }

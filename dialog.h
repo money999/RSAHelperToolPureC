@@ -32,8 +32,8 @@ private:
     QPushButton * pbT1Exe;
 
     void execTrans();
-    QString showPubkey();
-    QString showPrikey();
+    void showPubkey(RSA *r);
+    void showPrikey(RSA *r);
 
 };
 
