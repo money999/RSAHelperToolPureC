@@ -26,6 +26,8 @@ Dialog::Dialog(QWidget *parent)
    bgT1Radio->addButton(rbT1Pri, 1);
    bgT1Radio->addButton(rbT1Pub, 2);
    bgT1Radio->addButton(rbT1Xml, 3);
+   teT1Input->setWordWrapMode(QTextOption::WrapAnywhere);//允许单词从中间断开，避免/后换行，系统认为/后是一个新单词
+   teT1Show->setWordWrapMode(QTextOption::WrapAnywhere);
 
 
    QVBoxLayout *tmpVLMain;
