@@ -33,6 +33,22 @@ int pubkeyToRSA(const char *key, RSA **r)
 }
 
 /**
+ * @brief pubPKCS1keyToRSA
+ * @param key
+ * @param r 注意!!!调用函数一定要在外部RSA_free(r)!!!
+ * @return
+ * 注意!!!调用函数一定要在外部RSA_free(r)!!!
+ */
+int pubPKCS1keyToRSA(const char *key, RSA **r)
+{
+    BIO *keybio = BIO_new_mem_buf(key, -1);
+    *r = PEM_read_bio_RSAPublicKey(keybio, r, NULL, NULL);
+    BIO_free(keybio);
+    if(*r == NULL) return 0;
+    return 1;
+}
+
+/**
  * @brief RSAGetPKCS1
  * @param r
  * @param str 参数要保证有足够的空间，建议2000byte,不想内部申请怕忘记释放
@@ -322,5 +338,7 @@ int parseXml(const char* keyword, const char *str, char res[]){
     res[de-ds] = '\0';//源码显示strncpy当n先走完时不会自动加\0,除非source先走完才会加\0
     return 1;
 }
+
+
 
 

@@ -24,3 +24,9 @@ HEADERS += \
     helper.h \
     dialog.h
 
+TRANSLATIONS += translations/language_zh.ts
+
+RESOURCES += \
+    resource.qrc
+
+

@@ -13,6 +13,8 @@
 #include <QRadioButton>
 #include <QByteArray>
 #include <QLatin1String>
+#include <QComboBox>
+#include <QLabel>
 #include "helper.h"
 
 class Dialog : public QDialog
@@ -25,13 +27,16 @@ public:
 
 private:
     QTabWidget *twDisplay;
+
     QTextEdit *teT1Input, *teT1Show;
-    QGroupBox *gbT1Input;
     QButtonGroup *bgT1Radio;
-    QRadioButton *rbT1Pub, *rbT1Pri, *rbT1Xml;
-    QPushButton * pbT1Exe;
+    QPushButton *pbT1Exe;
+
+    QComboBox *cbT2Hash, *cbT2Padding;
 
     void execTrans();
+    void bgT1Exchange(int id);
+
     void showPubkey(RSA *r);
     void showPrikey(RSA *r);
 

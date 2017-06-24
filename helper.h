@@ -4,9 +4,11 @@
 #include<openssl/rsa.h>
 #include <openssl/pem.h>
 #include <string.h>
+#include <openssl/err.h>
 
 int prikeyToRSA(const char *key, RSA **r);
 int pubkeyToRSA(const char *key, RSA **r);
+int pubPKCS1keyToRSA(const char *key, RSA **r);
 int xmlkeyToRSA(const char *key, RSA **r);
 int RSAGetPKCS1(RSA *r, char res[]);
 int RSAGetPKCS8(RSA *r, char res[]);
