@@ -8,21 +8,24 @@ SOURCES += \
     applink.c \
     helper.cpp \
     main.cpp \
-    dialog.cpp
+    dialog.cpp \
+    algdialog.cpp
 
 LIBS += -L"D:/OpenSSL-Win32/lib/MinGW" -llibeay32
 LIBS += -L"D:/OpenSSL-Win32/lib/MinGW" -lssleay32
-#LIBS += -L"D:/OpenSSL-Win32/lib/MinGW" -llibssl-1_1
-#LIBS += -L"D:/OpenSSL-Win32/lib/MinGW" -llibcrypto-1_1
+#LIBS += -L"D:\OpenSSL-Win32-1.1.0\lib\MinGW" -llibssl-1_1
+#LIBS += -L"D:\OpenSSL-Win32-1.1.0\lib\MinGW" -llibcrypto-1_1
 
 #LIBS+= $${PWD}/libeay32.a
 #LIBS+= $${PWD}/ssleay32.a
 
-INCLUDEPATH += $$quote(D:/OpenSSL-Win32/include)
+#INCLUDEPATH += $$quote(D:\OpenSSL-Win32-1.1.0\include)
+INCLUDEPATH += $$quote(D:\OpenSSL-Win32\include)
 
 HEADERS += \
     helper.h \
-    dialog.h
+    dialog.h \
+    algdialog.h
 
 TRANSLATIONS += translations/language_zh.ts
 

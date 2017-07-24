@@ -7,10 +7,11 @@
  * @param r 注意!!!调用函数一定要在外部RSA_free(r)!!!
  * @return
  * 注意!!!调用函数一定要在外部RSA_free(r)!!!
+ * 需调用OpenSSL_add_all_algorithms()
  */
-int prikeyToRSA(const char *key, RSA **r){
+int prikeyToRSA(const char *key, RSA **r, void* pass){
     BIO *keybio = BIO_new_mem_buf(key, -1);
-    *r = PEM_read_bio_RSAPrivateKey(keybio, r,NULL, NULL);
+    *r = PEM_read_bio_RSAPrivateKey(keybio, r,NULL, pass);
     BIO_free(keybio);
     if(*r == NULL) return 0;
     return 1;
@@ -22,6 +23,7 @@ int prikeyToRSA(const char *key, RSA **r){
  * @param r 注意!!!调用函数一定要在外部RSA_free(r)!!!
  * @return
  * 注意!!!调用函数一定要在外部RSA_free(r)!!!
+ * 需调用OpenSSL_add_all_algorithms()
  */
 int pubkeyToRSA(const char *key, RSA **r)
 {
@@ -51,15 +53,15 @@ int pubPKCS1keyToRSA(const char *key, RSA **r)
 /**
  * @brief RSAGetPKCS1
  * @param r
- * @param str 参数要保证有足够的空间，建议2000byte,不想内部申请怕忘记释放
+ * @param res 参数要保证有足够的空间，建议2000byte,不想内部申请怕忘记释放
  * @return
  */
-int RSAGetPKCS1(RSA *r, char res[]){
+int RSAGetPKCS1(RSA *r, char res[], const EVP_CIPHER* enc, void* pass){
     if(r == NULL || RSA_check_key(r) == 0) return 0;
 
     int len;
     BIO *out=BIO_new(BIO_s_mem());
-    PEM_write_bio_RSAPrivateKey(out,r,NULL,NULL,0,NULL,NULL);
+    if(PEM_write_bio_RSAPrivateKey(out,r,enc,NULL,0,NULL,pass) == 0) return 0;
     len=BIO_ctrl_pending(out);
     BIO_read(out,res,len);
     res[len] = '\0';
@@ -71,17 +73,18 @@ int RSAGetPKCS1(RSA *r, char res[]){
 /**
  * @brief RSAGetPKCS8
  * @param r
- * @param str 参数要保证有足够的空间，建议2000byte,不想内部申请怕忘记释放
+ * @param res 参数要保证有足够的空间，建议2000byte,不想内部申请怕忘记释放
  * @return
+ * 需调用OpenSSL_add_all_algorithms()
  */
-int RSAGetPKCS8(RSA *r, char res[]){
+int RSAGetPKCS8(RSA *r, char res[], const EVP_CIPHER* enc, void* pass){
     if(r == NULL || RSA_check_key(r) == 0) return 0;
 
     int len;
     BIO *out=BIO_new(BIO_s_mem());
     EVP_PKEY *k = EVP_PKEY_new();
     EVP_PKEY_set1_RSA(k, r);
-    PEM_write_bio_PKCS8PrivateKey(out,k,NULL,NULL,NULL,NULL,NULL);
+    if(PEM_write_bio_PKCS8PrivateKey(out,k,enc,NULL,0,NULL,pass) == 0) return 0;
     len=BIO_ctrl_pending(out);
     len = BIO_read(out,res,len);
     res[len] = '\0';
@@ -151,14 +154,55 @@ int RSASignBase64(RSA *r, int type, const unsigned char *sour, int sourl, unsign
     case NID_sha1:
         SHA1(sour, sourl, hashStr);
         RSA_sign(NID_sha1, hashStr, SHA_DIGEST_LENGTH, f, &flen, r);
-        resl = EVP_EncodeBlock(res, f, flen);
-        res[resl]='\0';
+        break;
+    case NID_sha224:
+        SHA224(sour, sourl, hashStr);
+        RSA_sign(NID_sha224, hashStr, SHA224_DIGEST_LENGTH, f, &flen, r);
+        break;
+    case NID_sha256:
+        SHA256(sour, sourl, hashStr);
+        RSA_sign(NID_sha256, hashStr, SHA256_DIGEST_LENGTH, f, &flen, r);
+        break;
+    case NID_sha384:
+        SHA384(sour, sourl, hashStr);
+        RSA_sign(NID_sha384, hashStr, SHA384_DIGEST_LENGTH, f, &flen, r);
+        break;
+    case NID_sha512:
+        SHA512(sour, sourl, hashStr);
+        RSA_sign(NID_sha512, hashStr, SHA512_DIGEST_LENGTH, f, &flen, r);
+        break;
+    case NID_md5:
+        MD5(sour, sourl, hashStr);
+        RSA_sign(NID_md5, hashStr, MD5_DIGEST_LENGTH, f, &flen, r);
         break;
     default:
         return 0;
         break;
     }
+    resl = EVP_EncodeBlock(res, f, flen);
+    res[resl]='\0';
+    return 1;
+}
 
+/**
+ * @brief RSASignHashBase64,默认输入的值已是摘要
+ * @param r
+ * @param type
+ * @param sourHash
+ * @param res
+ * @return
+ */
+int RSASignHashBase64(RSA *r, int type, const unsigned char *sourHash, int sourl, unsigned char res[])
+{
+    if(r == NULL || RSA_check_key(r) == 0) return 0;
+
+    unsigned char f[300];
+    unsigned int flen;
+    int resl;
+
+    RSA_sign(type, sourHash, sourl, f, &flen, r);
+    resl = EVP_EncodeBlock(res, f, flen);
+    res[resl]='\0';
     return 1;
 }
 
@@ -171,19 +215,26 @@ int RSASignBase64(RSA *r, int type, const unsigned char *sour, int sourl, unsign
  * @param outl
  * @return
  */
-int RSAVerifyRes(RSA *r, unsigned char *in, int inl, unsigned char out[], int *outl){
+int RSAVerifyRes(RSA *r, unsigned char *in, int inl, unsigned char out[], int *outl, int *type){
     if(r == NULL || r->n == NULL || r->e == NULL) return 0;
 
     X509_SIG *sig = NULL;
     unsigned char *s;
     int len;
-
     s = (unsigned char *)malloc((unsigned int)inl);
     len = RSA_public_decrypt(inl, in, s, r, RSA_PKCS1_PADDING);
+    if(len == -1){
+        free(s);
+        return 0;
+    }
     sig = d2i_X509_SIG(NULL, (const unsigned char**)&s, (long)len);
     *outl = sig->digest->length;
     memcpy(out, sig->digest->data, *outl);
+    if(type != NULL){
+        *type = OBJ_obj2nid(sig->algor->algorithm);
+    }
     free(s);
+    if(sig){X509_SIG_free(sig); sig = NULL;}
     return 1;
 }
 
@@ -195,13 +246,13 @@ int RSAVerifyRes(RSA *r, unsigned char *in, int inl, unsigned char out[], int *o
  * @param outl 获取签名前的hash值，可将文本hash后对比是否一致
  * @return
  */
-int RSAVerifyBase64(RSA *r, unsigned char *in, unsigned char out[], int *outl){
+int RSAVerifyBase64(RSA *r, unsigned char *in, unsigned char out[], int *outl, int *type){
     if(r == NULL || r->n == NULL || r->e == NULL) return 0;
 
     unsigned char tmp[500];
     int tmpl;
     decodeBase64(in, tmp, &tmpl);
-    RSAVerifyRes(r, tmp, tmpl, out, outl);
+    return RSAVerifyRes(r, tmp, tmpl, out, outl, type);
 }
 
 
@@ -322,7 +373,7 @@ int xmlkeyToRSA(const char *key, RSA **r)
  * @brief parseXml
  * @param keyword 标签值无需带尖括号
  * @param str 待查串
- * @param res 建议大小500,因为256位的编程64不会超过500
+ * @param res 建议大小500,因为256位的编成64不会超过500
  * @return 取标签值中间的值返回
  */
 int parseXml(const char* keyword, const char *str, char res[]){
@@ -338,7 +389,4 @@ int parseXml(const char* keyword, const char *str, char res[]){
     res[de-ds] = '\0';//源码显示strncpy当n先走完时不会自动加\0,除非source先走完才会加\0
     return 1;
 }
-
-
-
 

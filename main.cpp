@@ -1,32 +1,133 @@
-//#include <openssl/pem.h>
 //#include <openssl/aes.h>
 //#include <openssl/md5.h>
 //#include <openssl/x509.h>
 //#include <openssl/objects.h>
 //#include <openssl/rsa.h>
-//#include <openssl/bn.h>
-//#include <openssl/rsa.h>
 //#include <openssl/objects.h>
-//#include <openssl/x509.h>
-//#include<string.h>
+#include<string.h>
 //#include "helper.h"
-#include "dialog.h"
+//#include "dialog.h"
+//#include "algdialog.h"
 #include <QApplication>
 #include <QTranslator>
+#include <openssl/evp.h>
+
+
+
+
+//RSA *PEM_read_bio_RSAPrivateKey(BIO *bp, RSA **rsa, pem_password_cb *cb,
+//                                void *u)
+//{
+//    EVP_PKEY *pktmp = NULL;
+//    pktmp = PEM_read_bio_PrivateKey(bp, NULL, cb, u);
+//    printf("qqqq   %d\n\n\n",pktmp);
+//    return pkey_get_rsa(pktmp, rsa);
+//}
+
 
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    QTranslator translator;
-    translator.load(":/trans/language_zh");
-    a.installTranslator(&translator);
-    Dialog w;
-    w.show();
+//    QApplication a(argc, argv);
+//    QTranslator translator;//如果在dialog.h添加一些成员变量会导致程序无法运行，原因未知，但是把这三行注释掉就可以运行。注释掉后再添加变量又不能运行，再把这三行去注释就可以运行……
+//    translator.load(":/trans/language_zh");
+//    a.installTranslator(&translator);
+//    MyDialog w;
+//    w.show();
+//    AlgDialog ad;
+//    ad.show();
+//    return a.exec();
 
-    return a.exec();
+    OpenSSL_add_all_algorithms();
+    OpenSSL_add_all_ciphers();
+//    char key[]= "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDJgQfODtCNz/HP"
+//                "ZlF58boMSS95cN7tmUL/zPkXiMl1/K8Tk2N/eJHrpEG38QVopNhlaiRxNN4WOlRf"
+//                "                            5DKUSoCtH+B9WobodVcyUA7TQAEm5rZkPNo14/UTDVDsql4ugW8his38Mr4n4PfUW9+VFWHpTIIFbR0V+5NT2EQiEnCHxnBYgQlSa7JvphcsxKSRsXZ/+I4DoRudDfp71nrTm4gOeiuMUVzIOF+S/lCPBGKDXyyvJAOAoxuD8dB0yeohMkn50VnvGLMG6QmLAE50GE6BAB0P+EvGj14NgsE/thLzhnDRgmK9Cfn5KODUtfmsmXCbuXSsiVveUvsKlb4WPXYVAgMBAAECggEALz+RG/D/V/FFavM78ZMLo+vZNOmRbDb+rcpbMfiB/Kd2SenKb85OsOk/+6iJMyNMFmOQDfduh9m/hQiWD410pKOP2PTMI1+4RXTeNQyR+JQqelCGfhJomcIKkqPUF6WD8GKCsDsZuXIXynSMdYGhBrpI1oriQhBOWF+igja+qickEXvAUx+r5NMr+Q6YhEZoxx3k/77sG9gvodq/GYoX7KzODiH1eaMFIgThkwO7Oswwv7IyoZ+UIb2vVm+IWW8seMzxmLAqz5N8rUZPDWRTc/G1aSpOcCD+EDglH8uehwunNWZ9fbC8HdukDX83rrMpvTABzxw7ekf6BHh+s4iglQKBgQDn7Ho+4ui8XIdF/ceegGlwbQn9vbkQnKZeg/SXP/Lnf9VxlE8CLuLzbLmA30WYjtWS2gbcNr/Ffv3w9NGoJP90y12RLU2g8lpRObLN5d2xmwRmQIF/dg+4KRteLgFfrcLuSLcj8/cfWCJX/Je4MqIHM24fVYTKqJu3EHAPSx5BtwKBgQDebCEmC8HQzNFn4LKqKVrdQB3j245i4dBR/BL76TMoBBgtpoNEsvJ0aWeV5d2SHzHD4cJOW20xpbL3za++j/BuZThr2wCaxbSD5TxN94qUOyzRs0PT9CZzvq8qS8iegRVrGBmtkLZVLhC2+IyE6esClO2cBbzOijyIfQuxF4gWkwKBgQDMY18oZJhux6x/RjPRv6EsbyvK7pRVy3fi+69mS/kpg0L7oZQvfFqN5Fdm911CIT6e+H3rPGStDEmHPHo4EMMAjuiatK4hFPP7eTnWsqk5iD/MTTTSu50G01NHIIwdYejUTkj36lzyxp0dpYGf1x9r8SsvehJY91ajcl0PXUgA6QKBgQDT4Y/GbYbJgIOvgBbTEKg1gmG28S13twO7RfVTsngAE75wpmIALLPY/5wk6J+lFkBTCJoQCPpBREbz1yYm03nHwHb6D9tIlTP8PYCwCTMjOCfe7/WaUMfclPbKxPytOeyMY536gJOhG0vi8WzzJN6yS+r6KWEOJBO8NdrQbck/LwKBgQCLR47+q+jufc6omk6CVTywvLhqBbf5lf0kvwe8HAJ0O0X9RPpaQWd8YERFUQ45WKURbnQgnTHf1VsbzGWli0zyRU4PU5xjUgGLoG8cP5qD4nRfpDVw9ZJLFdfdT37SJAXEr8LE7A0OQLIJCNEsRZqCUhPJ1QDFmV7+0ZsnT+5smg==\n-----END PRIVATE KEY-----";
+//    char pubkey[] = "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyYEHzg7Qjc/xz2ZRefG6DEkveXDe7ZlC/8z5F4jJdfyvE5Njf3iR66RBt/EFaKTYZWokcTTeFjpUX+QylEqArR/gfVqG6HVXMlAO00ABJua2ZDzaNeP1Ew1Q7KpeLoFvIYrN/DK+J+D31FvflRVh6UyCBW0dFfuTU9hEIhJwh8ZwWIEJUmuyb6YXLMSkkbF2f/iOA6EbnQ36e9Z605uIDnorjFFcyDhfkv5QjwRig18sryQDgKMbg/HQdMnqITJJ+dFZ7xizBukJiwBOdBhOgQAdD/hLxo9eDYLBP7YS84Zw0YJivQn5+Sjg1LX5rJlwm7l0rIlb3lL7CpW+Fj12FQIDAQAB\n-----END PUBLIC KEY-----";
+//    RSA *r = NULL, *red = NULL;
+//    char res[5000];
+//    int flag;
+//    prikeyToRSA(key, &r, NULL);
+//    const EVP_CIPHER *tl = deccss;
+
+//    flag = RSAGetPKCS1(r, res, tl, (void*)"money");
+//    printf("%d\n%s\n", flag, res);
+
+//    flag = prikeyToRSA(res, &red, (void*)"money");
+//    flag = RSAGetPKCS1(r, res, NULL, NULL);
+//    printf("%d\n%s\n", flag, res);
+//    flag = RSAGetPKCS8(r, res, NULL, NULL);
+//    printf("%d\n%s\n", flag, res);
+
+//    flag = RSAGetPKCS8(r, res, EVP_des_ede3_cbc(), (void*)"money");
+//    printf("%d\n%s\n", flag ,res);
+
+    char *kkk[] = {"AES-128-CBC", "AES-128-ECB", "AES-128-CFB", "AES-128-OFB","AES-192-CBC", "AES-192-ECB", "AES-192-CFB", "AES-192-OFB","AES-256-CBC", "AES-256-ECB", "AES-256-CFB", "AES-256-OFB","DES-CBC", "DES-ECB", "DES-CFB", "DES-OFB","DES-EDE-CBC", "DES-EDE", "DES-EDE-OFB", "DES-EDE-CFB","DES-EDE3-CBC", "DES-EDE3", "DES-EDE3-OFB", "DES-EDE3-CFB","DESX-CBC","RC4","RC4-40","IDEA-CBC", "IDEA-ECB", "IDEA-CFB", "IDEA-OFB","RC2-CBC", "RC2-ECB", "RC2-CFB", "RC2-OFB","RC2-40-CBC", "RC2-64-CBC","BF-CBC", "BF-ECB", "BF-CFB", "BF-OFB","CAST5-CBC", "CAST5-ECB", "CAST5-CFB", "CAST5-OFB","RC5-32-12-16-CBC", "RC5-32-12-16-ECB", "RC5-32-12-16-CFB", "RC5-32-12-16-OFB","AES-128-GCM", "AES-192-GCM", "AES-256-GCM","AES-128-OCB(VOID)", "AES-192-OCB(VOID)", "AES-256-OCB(VOID)","AES-128-CCM", "AES-192-CCM", "AES-256-CCM","CHACHA20","CHACHA20-POLY1305"};
+
+    int nidd = EVP_CIPHER_nid(EVP_rc5_32_12_16_cbc());
+    EVP_aes_128_cbc()
+    printf("%d\n", nidd);
+    printf("%s\n",OBJ_nid2sn(nidd));
+
+
+
+//    for(int i=0;i<60;i++)
+//    {
+//        const EVP_CIPHER *tt = EVP_get_cipherbyname(kkk[i]);
+//        if(tt!=NULL)
+//            printf("%d\n", EVP_CIPHER_nid(tt));
+//        else{
+//            printf("%s\n", kkk[i]);
+//        }
+//    }
+
+    return 1;
 }
 
+
+
+////puts("d");
+//int dd = prikeyToRSA(key, &r, NULL);
+////printf("%d\n", dd);
+////unsigned char ttt[]="rkYJN7bhaRtKN4GHW2n+YYXJn5oIypTv1FAAAVVS2f5s0PsbdowbB+z7ZNcd5Lv4zJuK/Dh9ZGeol26T0fcbmjh6M1r2SV4M9sjNXnZ36Ck5Wpg8Vzea2WyjoYMDYhYTVXHZy6GoPMlVdkMO6EkTyTIRMjwvhUkO+BkdsNku6NAtVH5x2V4ZgkA19N2rFlZnY/uHXHS+7QSmr8vzAwpWo/WYdd9xu0mU6kk3BLc9laVpNBALJ3qv1AiFE/gyCgOHt3/NW2N9kP8szglewxLrBib5MVKW2ro9eEMVo92OIFTF5gqONwA57HX84FVYd3osBI7DP7/VGKPhwk4g0QF4JA==";
+
+//// r = RSA_generate_key(512, RSA_3, NULL, NULL);
+
+//OpenSSL_add_all_algorithms();
+//char res[5000];
+//int len;
+//BIO *out=BIO_new(BIO_s_mem());
+////PEM_write_bio_RSAPrivateKey(out,r,EVP_des_ede3_cbc, (unsigned char*)"hello", 5, NULL, NULL);
+//EVP_PKEY *evpk = EVP_PKEY_new();
+//int flag = EVP_PKEY_set1_RSA(evpk, r);
+//printf("%d\n",flag);
+//flag = PEM_write_bio_PKCS8PrivateKey(out, evpk, EVP_des_ede3_cbc(), NULL, 0, 0, (char*)"hello");
+//printf("%d\n",flag);
+//len=BIO_ctrl_pending(out);
+//BIO_read(out,res,len);
+//res[len] = '\0';
+//BIO_free(out);
+//EVP_PKEY_free(evpk);
+
+
+//printf("%s", res);
+//if(r){RSA_free(r); r=NULL;}
+
+////char res[]="-----BEGIN RSA PRIVATE KEY-----\nProc-Type: 4,ENCRYPTED\nDEK-Info: DES-EDE3-CBC,14CADC30D1240753\n\nM0VFabcTwQKvmNvzAulRfd1TrtPURl8hGCU7ILxudJw//HNVz2OwIH2JourLffm1yD+/zoTPRUD/WlmGyxla4T3ZSyZ7jGFR+9lTENu0f+4tjqpSguNltmOlsiZ/U+cposnb++D0uGswB03M5sffiDWkqc7YHuye9+twikjQzhLczLzm8olGDYmatgeNzZtoK2ChHikm0Vvc13aGaMoQoFDbsOV8LjVF19UQXBHR0mGiu3V9ZpVwXXZ3In02VBKJid5iURoDh9aWlaiLs6zsZHvVR+5q0dUq8IU3m2n4vvVp/vkhnFgPCH8MGhzRERn7X5uWkCfZMxSe0OLrxmXtlZM3as+XbKjyI1+7m2R8WLRP42OIgNuOAJJvDE8lmEwbx8OicBGY1m7gHh42t91py1vE0Ctr+Ytui4z2gcUCF7f3p2SmQiaRKhNlWyK8Um3r+P7IIxcBE8P7vCbu5/7KQQompFrcMvX09v2rx6qTD4OLOEKgOfHyNXz0n7sli1zWq7zKAYAkyvv8ZrzFlJpEAvQT36hS3qHbOVsbW7gWLeu5wFQ74vF/73qyaSXnQQiV1AY/Fqfd5HeRziwyVwJYWinbcQ4vR036dVndiKClq5DU0UtlE9xCPbHjR425aL8H2gPqTERz2eAfQWHsHTCNxP0CyuG0JFA8/qUnI9my8mbAw8Qz7Q5xzvLt9unp8tNwzIivTKBqmPp05hdQwd0SZGQFIkzGkpNDvqGWOmob/03sRUXzlkhm202K8erFLeoZMqi1OpPgHcEgwmLFqFtog1aIRHwrqoveZn4dZbVvv68bYJCXChT9FRKdEAXTsa/+ByYZQEwc9tWfeA4UonIyyys9/AiXDkicOp5dcnAyZOHvocKcb/JNbIsh9Rk8il/8AvGOhqn7V78SuagwoRGGfBuAA0ivzMujNCYBPHMKnlgVdE5W6acx6uPjY2sjdpnrKBlpqZOOw8mKghcNrX55DXgQq10vtYhm7A1Y5I9WErkLQk3NajsmAoKaSZ1aAF7xGLl2Wc9SHRokxmnsFU/M6MsGUaj1epFc5Ug3w4Q4t70TKYSS8suf3ZhVWFXwBB/y4KyxofF9ByPqJkZpqahFm78vTeCHpAHQ3ZtiWi3TRMfAx82/6Ebl4drsSFXrx5JrheYsSBPUVBeyos7ngi3paokmLavksmCbCxoTWfXDNti4TJLJ89l4qzWJRn5P+C6hoaUyh7FLzmgqGxJi+F0Dhu+dIGZQtZeMb4xfwrRMyF2KJ1Rm9mmCSiTHyjKFbWL/LEYWv0hPDBZmImCfHC5xff33vP4R6X9CLCFozxIwC7pe+4E3sF9AxpNsuP5bZMLCgCom844s9Xt9G3HlngXw1ufB/EhReRRxgTPcfYUiU1bxh3U1VnSpL1qdvqNVZGqVgYw4sFdmjPMkPWwHTOCffpvPcv3pOFQOC9ez0oqE6uB0N62T5qKOU21hFGYc8BOPexBustBX/B6IUs1Q9W2j7kplqrrY4VymsVlu7RD0YDGl9ZDLEZq6lm9XW9/k0DBx0JCYfh9/Bwp7JiP1b1L75MHCUZVULgm90Ip98xbSGajVd3FRqzT7ln1Qjn7LtVQS\n-----END RSA PRIVATE KEY-----";
+
+//char kkk[5000];
+//BIO *keybio = BIO_new_mem_buf(res, -1);
+//printf("%d\n\n\n", keybio);
+//RSA *rr = PEM_read_bio_RSAPrivateKey(keybio, NULL, NULL, (void *)"hello");
+//if(rr==NULL){printf("asdlkf");}
+
+
+//RSAGetPKCS8(rr, kkk, NULL, NULL);
+//printf("%s", kkk);
+
+//BIO_free(keybio);
+//if(rr){RSA_free(rr); rr=NULL;}
+//-----------------------------------------------------------------------------------------------------------------
 //    RSA  *r=NULL , *rp= NULL;
 //    int  i,bits=512;
 //    unsigned long  e=RSA_F4;
