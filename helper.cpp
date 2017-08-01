@@ -11,7 +11,7 @@
  */
 int prikeyToRSA(const char *key, RSA **r, void* pass){
     BIO *keybio = BIO_new_mem_buf(key, -1);
-    *r = PEM_read_bio_RSAPrivateKey(keybio, r,NULL, pass);
+    *r = PEM_read_bio_RSAPrivateKey(keybio, r, NULL, pass);
     BIO_free(keybio);
     if(*r == NULL) return 0;
     return 1;
@@ -53,7 +53,7 @@ int pubPKCS1keyToRSA(const char *key, RSA **r)
 /**
  * @brief RSAGetPKCS1
  * @param r
- * @param res 参数要保证有足够的空间，建议2000byte,不想内部申请怕忘记释放
+ * @param res 参数要保证有足够的空间，建议6000byte,不想内部申请怕忘记释放
  * @return
  */
 int RSAGetPKCS1(RSA *r, char res[], const EVP_CIPHER* enc, void* pass){
@@ -73,7 +73,7 @@ int RSAGetPKCS1(RSA *r, char res[], const EVP_CIPHER* enc, void* pass){
 /**
  * @brief RSAGetPKCS8
  * @param r
- * @param res 参数要保证有足够的空间，建议2000byte,不想内部申请怕忘记释放
+ * @param res 参数要保证有足够的空间，建议6000byte,不想内部申请怕忘记释放
  * @return
  * 需调用OpenSSL_add_all_algorithms()
  */
@@ -98,11 +98,11 @@ int RSAGetPKCS8(RSA *r, char res[], const EVP_CIPHER* enc, void* pass){
 /**
  * @brief RSAGetPub
  * @param r
- * @param res 建议大小2000。获取公钥，公钥是PEM格式，头部尾部没有RSA关键字, SubjectPublicKeyInfo structure
+ * @param res 建议大小6000。获取公钥，公钥是PEM格式，头部尾部没有RSA关键字, SubjectPublicKeyInfo structure
  * @return
  */
 int RSAGetPub(RSA *r, char res[]){
-    if(r == NULL || r->n == NULL || r->e == NULL) return 0;
+    if(RSAPubCheck(r) == 0) return 0;
 
     int len;
     BIO *out=BIO_new(BIO_s_mem());
@@ -118,11 +118,11 @@ int RSAGetPub(RSA *r, char res[]){
 /**
  * @brief RSAGetPubPKCS1
  * @param r
- * @param res 建议大小2000
+ * @param res 建议大小6000
  * @return
  */
 int RSAGetPubPKCS1(RSA *r, char res[]){
-    if(r == NULL || r->n == NULL || r->e == NULL) return 0;
+    if(RSAPubCheck(r) == 0) return 0;
     int len;
     BIO *out=BIO_new(BIO_s_mem());
     PEM_write_bio_RSAPublicKey(out, r);
@@ -140,19 +140,20 @@ int RSAGetPubPKCS1(RSA *r, char res[]){
  * @param type hash类型
  * @param sour 待签名数据, 未hash
  * @param sourl
- * @param res base64字符串以\0结尾, 因为密钥长度最长256，base64以后应该不会超过500
+ * @param res base64字符串以\0结尾, 因为密钥长度最长768，base64以后应该不会超过6000
  * @return
  */
 int RSASignBase64(RSA *r, int type, const unsigned char *sour, int sourl, unsigned char res[]){
     if(r == NULL || RSA_check_key(r) == 0) return 0;
 
-    unsigned char hashStr[100], f[300];
+    unsigned char hashStr[100], f[6000];
     unsigned int flen;
     int resl;
 
     switch (type){
     case NID_sha1:
         SHA1(sour, sourl, hashStr);
+        qDebug()<<"ttt";
         RSA_sign(NID_sha1, hashStr, SHA_DIGEST_LENGTH, f, &flen, r);
         break;
     case NID_sha224:
@@ -196,7 +197,7 @@ int RSASignHashBase64(RSA *r, int type, const unsigned char *sourHash, int sourl
 {
     if(r == NULL || RSA_check_key(r) == 0) return 0;
 
-    unsigned char f[300];
+    unsigned char f[6000];
     unsigned int flen;
     int resl;
 
@@ -216,7 +217,7 @@ int RSASignHashBase64(RSA *r, int type, const unsigned char *sourHash, int sourl
  * @return
  */
 int RSAVerifyRes(RSA *r, unsigned char *in, int inl, unsigned char out[], int *outl, int *type){
-    if(r == NULL || r->n == NULL || r->e == NULL) return 0;
+    if(RSAPubCheck(r) == 0) return 0;
 
     X509_SIG *sig = NULL;
     unsigned char *s;
@@ -228,10 +229,13 @@ int RSAVerifyRes(RSA *r, unsigned char *in, int inl, unsigned char out[], int *o
         return 0;
     }
     sig = d2i_X509_SIG(NULL, (const unsigned char**)&s, (long)len);
-    *outl = sig->digest->length;
-    memcpy(out, sig->digest->data, *outl);
-    if(type != NULL){
-        *type = OBJ_obj2nid(sig->algor->algorithm);
+    X509_ALGOR *palg;
+    ASN1_OCTET_STRING *pdigest;
+    X509_SIG_getm(sig, &palg, &pdigest);
+    *outl = pdigest->length;
+    memcpy(out, pdigest->data, *outl);
+    if(type != NULL){        
+        *type = OBJ_obj2nid(palg->algorithm);
     }
     free(s);
     if(sig){X509_SIG_free(sig); sig = NULL;}
@@ -247,9 +251,9 @@ int RSAVerifyRes(RSA *r, unsigned char *in, int inl, unsigned char out[], int *o
  * @return
  */
 int RSAVerifyBase64(RSA *r, unsigned char *in, unsigned char out[], int *outl, int *type){
-    if(r == NULL || r->n == NULL || r->e == NULL) return 0;
+    if(RSAPubCheck(r) == 0) return 0;
 
-    unsigned char tmp[500];
+    unsigned char tmp[6000];
     int tmpl;
     decodeBase64(in, tmp, &tmpl);
     return RSAVerifyRes(r, tmp, tmpl, out, outl, type);
@@ -277,17 +281,19 @@ int decodeBase64(const unsigned char *in, unsigned char out[], int *outl){
 /**
  * @brief RSAGetPubXml
  * @param r
- * @param res 建议大小500+
+ * @param res 建议大小6000
  * @return
  */
 int RSAGetPubXml(RSA *r, char res[])
 {
-    if(r == NULL || r->n == NULL || r->e == NULL) return 0;
-    unsigned char tmp[2][300];
+    if(RSAPubCheck(r) == 0) return 0;
+    unsigned char tmp[2][6000];
     int tmpl[2];
-    tmpl[0] = BN_bn2bin(r->n, tmp[0]);
-    tmpl[1] = BN_bn2bin(r->e, tmp[1]);
-    unsigned char blo[2][500];
+    const BIGNUM *n, *e, *d;
+    RSA_get0_key(r, &n, &e, &d);
+    tmpl[0] = BN_bn2bin(n, tmp[0]);
+    tmpl[1] = BN_bn2bin(e, tmp[1]);
+    unsigned char blo[2][6000];
     EVP_EncodeBlock(blo[0], tmp[0], tmpl[0]);
     EVP_EncodeBlock(blo[1], tmp[1], tmpl[1]);
     sprintf(res, "<RSAKeyValue><Modulus>%s</Modulus><Exponent>%s</Exponent></RSAKeyValue>", blo[0], blo[1]);
@@ -297,23 +303,27 @@ int RSAGetPubXml(RSA *r, char res[])
 /**
  * @brief RSAGetPriXml
  * @param r
- * @param res 建议大小2000+
+ * @param res 建议大小2000~6000
  * @return
  */
 int RSAGetPriXml(RSA *r, char res[])
 {
     if(r == NULL || RSA_check_key(r) == 0) return 0;
-    unsigned char tmp[8][300];
+    unsigned char tmp[8][6000];
     int tmpl[8];
-    tmpl[0] = BN_bn2bin(r->n, tmp[0]);
-    tmpl[1] = BN_bn2bin(r->e, tmp[1]);
-    tmpl[2] = BN_bn2bin(r->d, tmp[2]);
-    tmpl[3] = BN_bn2bin(r->p, tmp[3]);
-    tmpl[4] = BN_bn2bin(r->q, tmp[4]);
-    tmpl[5] = BN_bn2bin(r->dmp1, tmp[5]);
-    tmpl[6] = BN_bn2bin(r->dmq1, tmp[6]);
-    tmpl[7] = BN_bn2bin(r->iqmp, tmp[7]);
-    unsigned char blo[8][500];
+    const BIGNUM *n=NULL, *e=NULL, *d=NULL, *p=NULL, *q=NULL, *dmp1=NULL, *dmq1=NULL, *iqmp=NULL;
+    RSA_get0_key(r, &n, &e, &d);
+    RSA_get0_factors(r, &p, &q);
+    RSA_get0_crt_params(r, &dmp1, &dmq1, &iqmp);
+    tmpl[0] = BN_bn2bin(n, tmp[0]);
+    tmpl[1] = BN_bn2bin(e, tmp[1]);
+    tmpl[2] = BN_bn2bin(d, tmp[2]);
+    tmpl[3] = BN_bn2bin(p, tmp[3]);
+    tmpl[4] = BN_bn2bin(q, tmp[4]);
+    tmpl[5] = BN_bn2bin(dmp1, tmp[5]);
+    tmpl[6] = BN_bn2bin(dmq1, tmp[6]);
+    tmpl[7] = BN_bn2bin(iqmp, tmp[7]);
+    unsigned char blo[8][6000];
     for(int i=0;i<8;i++)
         EVP_EncodeBlock(blo[i], tmp[i], tmpl[i]);
     sprintf(res, "<RSAKeyValue><Modulus>%s</Modulus><Exponent>%s</Exponent><D>%s</D><P>%s</P><Q>%s</Q><DP>%s</DP><DQ>%s</DQ><InverseQ>%s</InverseQ></RSAKeyValue>",
@@ -331,8 +341,8 @@ int RSAGetPriXml(RSA *r, char res[])
 int xmlkeyToRSA(const char *key, RSA **r)
 {
     char s[8][15] = {"Modulus", "Exponent", "D", "P", "Q", "DP", "DQ", "InverseQ"};
-    char res[500];
-    unsigned char resdec[8][300];
+    char res[6000];
+    unsigned char resdec[8][6000];
     int resdecl[8];
     int i;
     for(i=0; i<8; i++){resdecl[i] = 0;}
@@ -345,26 +355,34 @@ int xmlkeyToRSA(const char *key, RSA **r)
     if(*r == NULL){
         *r = RSA_new();
     }
-    (*r)->n = BN_new();
-    BN_bin2bn(resdec[0], resdecl[0], (*r)->n);
-    (*r)->e = BN_new();
-    BN_bin2bn(resdec[1], resdecl[1], (*r)->e);
+    BIGNUM *n=NULL, *e=NULL, *d=NULL, *p=NULL, *q=NULL, *dmp1=NULL, *dmq1=NULL, *iqmp=NULL;
+    n = BN_new();
+    BN_bin2bn(resdec[0], resdecl[0], n);
+    e = BN_new();
+    BN_bin2bn(resdec[1], resdecl[1], e);
 
-    if(i == 2)
+    if(i == 2){
+        RSA_set0_key(*r, n, e, d);
         return 2;
+    }
 
-    (*r)->d = BN_new();
-    BN_bin2bn(resdec[2], resdecl[2], (*r)->d);
-    (*r)->p = BN_new();
-    BN_bin2bn(resdec[3], resdecl[3], (*r)->p);
-    (*r)->q = BN_new();
-    BN_bin2bn(resdec[4], resdecl[4], (*r)->q);
-    (*r)->dmp1 = BN_new();
-    BN_bin2bn(resdec[5], resdecl[5], (*r)->dmp1);
-    (*r)->dmq1 = BN_new();
-    BN_bin2bn(resdec[6], resdecl[6], (*r)->dmq1);
-    (*r)->iqmp = BN_new();
-    BN_bin2bn(resdec[7], resdecl[7], (*r)->iqmp);
+    d = BN_new();
+    BN_bin2bn(resdec[2], resdecl[2], d);
+    p = BN_new();
+    BN_bin2bn(resdec[3], resdecl[3], p);
+    q = BN_new();
+    BN_bin2bn(resdec[4], resdecl[4], q);
+    dmp1 = BN_new();
+    BN_bin2bn(resdec[5], resdecl[5], dmp1);
+    dmq1 = BN_new();
+    BN_bin2bn(resdec[6], resdecl[6], dmq1);
+    iqmp = BN_new();
+    BN_bin2bn(resdec[7], resdecl[7], iqmp);
+
+
+    RSA_set0_key(*r, n, e, d);
+    RSA_set0_factors(*r, p, q);
+    RSA_set0_crt_params(*r, dmp1, dmq1, iqmp);//函数内部会把自身bn给free掉，然后直接指向现在开辟的空间，故此次不能free，这些函数连续调用两次必然出错……
     return 1;
 }
 
@@ -373,7 +391,7 @@ int xmlkeyToRSA(const char *key, RSA **r)
  * @brief parseXml
  * @param keyword 标签值无需带尖括号
  * @param str 待查串
- * @param res 建议大小500,因为256位的编成64不会超过500
+ * @param res 建议大小6000,因为6144/8=768位的编成64不会超过6000
  * @return 取标签值中间的值返回
  */
 int parseXml(const char* keyword, const char *str, char res[]){
@@ -390,3 +408,16 @@ int parseXml(const char* keyword, const char *str, char res[]){
     return 1;
 }
 
+/**
+ * @brief RSAPubCheck
+ * @param r
+ * @return 简单验证公钥正确返回1
+ */
+int RSAPubCheck(RSA *r)
+{
+    const BIGNUM *n=NULL, *e=NULL, *d=NULL;
+    if(r == NULL) return 0;
+    RSA_get0_key(r, &n, &e, &d);
+    if(n == NULL || e == NULL) return 0;
+    return 1;
+}

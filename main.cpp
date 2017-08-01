@@ -5,9 +5,9 @@
 //#include <openssl/rsa.h>
 //#include <openssl/objects.h>
 #include<string.h>
-//#include "helper.h"
-//#include "dialog.h"
-//#include "algdialog.h"
+#include "helper.h"
+#include "dialog.h"
+#include "algdialog.h"
 #include <QApplication>
 #include <QTranslator>
 #include <openssl/evp.h>
@@ -28,18 +28,30 @@
 
 int main(int argc, char *argv[])
 {
-//    QApplication a(argc, argv);
-//    QTranslator translator;//如果在dialog.h添加一些成员变量会导致程序无法运行，原因未知，但是把这三行注释掉就可以运行。注释掉后再添加变量又不能运行，再把这三行去注释就可以运行……
-//    translator.load(":/trans/language_zh");
-//    a.installTranslator(&translator);
-//    MyDialog w;
-//    w.show();
-//    AlgDialog ad;
-//    ad.show();
-//    return a.exec();
+    QApplication a(argc, argv);
+    QTranslator translator;//如果在dialog.h添加一些成员变量会导致程序无法运行，原因未知，但是把这三行注释掉就可以运行。注释掉后再添加变量又不能运行，再把这三行去注释就可以运行……
+    translator.load(":/trans/language_zh");
+    a.installTranslator(&translator);
+    MyDialog w;
+    w.show();
+    return a.exec();
 
-    OpenSSL_add_all_algorithms();
-    OpenSSL_add_all_ciphers();
+
+
+//    RSA *r = NULL;
+//    r = RSA_new();
+//    BIGNUM *e = BN_new();
+//    BN_dec2bn(&e, "65537");
+//    printf("%d\n", RSA_generate_key_ex(r, 2100, e, NULL));
+//    char res[9000];
+//    RSAGetPKCS1(r, res, NULL, NULL);
+//    printf("%s\n",res);
+
+//    OpenSSL_add_all_algorithms();
+//    OpenSSL_add_all_ciphers();
+//    OpenSSL_add_all_digests();
+//    char keyxmlp[]="<RSAKeyValue><Modulus>vUy1X46LBDkyAWxNlBmbVdT1HAJ0lh+6Qku3UyqLjShIP4c+wue65fyEYGvcho+Ij7C8s9IvBKG1lQsy3Kofqbm6Odlc3mgG2eQohIFS7q+jwmudHOKu0+RhwmMQxnKOtXtHZKB1zYQTcObqf+KWmKu/NUjtJl74aXT5BcLT48ao84KHwSn95G9M+rz4lcNydEIgk8oMUz50h1wTeGmB+T0b8X3W/KhQCNx1yKO6Y7MsHn58+5v/DT9AlsE1sVjPjDx0T+bpmgbvLhiPHehPSPWCFcIp9B93qsP+nWcCPzEO7S9D0incvnlIHJs04/HAjcaAJAq+sMbXh44Xo/bhqw==</Modulus><Exponent>AQAB</Exponent><D>j9mc8pKVnY4BLAerJGIZIq6D3NcY1YQivIJhO3fXOFtmG7CgxuflpSOxTLxqhm7Ibbj2jQep5zEjlbE+42T8TrPuiktdQT14B1hUWe0UooEiRnoUmIDCLg8dIuS5OLSRMeQOqq8tFhHJ3D/971S28CmDUfCrFj+RMkJLgk89SZa8jgd7QEYzTdhzOPQ0gBS9KmzZqiXwOyRr+aaQO2E4Ponbcst9Drwx+vH4UAA5+05qeykmJWYiWPnh+UMQb/wuN2E/POVYV3QDMs99rpIz4bO8rbVw+asZ7KHnUFybdCqYqXgUpBPS8p9p78WUv5O/1Pwa+czpT3MxAcrSzpSeQQ==</D><P>50GdUl86hfaa4MdHMTFzrMJ6sdko1LUunNRmBi2y3jgv+IKdiCGx1aspMecgFqTYDpRBGpCq5tZSR71t5gSq+HamzxiRf6jC1BlldI+PEVv1q1vxLB/qfAaHClIXp9nZvQ6mU7ELs8YHfnWy5vBxRBIZZM57EhHpO/211tlQOJE=</P><Q>0Y3Z2h83Z5+izW3D0pNms70ECXA1sHjPvzMjZpckn+kNlJ7SFI1gzCSpwmKd2wRcnMF1mlouylpfVG8USB+C7W0zFL2WIoSrR5eUbxAsjKAHlqYmFNoeM/iPttrz1c0yU1bOHckCfUfCIOs5qdLuF4sWWcJaMDY52qLrlokqdHs=</Q><DP>Yp1lZBn9z+CwfQgdwMmQxWwNfEfZlJNKtFASzbGxI/gb5MJ2QPX1auNZZtFjqqRTCiyIcracWmGsprEN61e0PM4EJi4Y5bJmmqHV1NXfMYzgf1lux904VflGns0RD1/j7S4RGYFXNytMSM4SI08HTfrV31n5u2Pt7MotP9hd0DE=</DP><DQ>ZW5N5qB5hvTkLp9Uy9aBPbrd+1uPAU5Y8GlmV0ANgEGkSy3c7gnIsseETAzD78Faup2BuSaxw0yfHBVwMcDe9OGIeh+STj79UPfz5xZjGeZUBf2CLVGukOVdWtr8b56VH3XC6vPi+pUDSD/Td3obuNWgCe5jDTcSJdv6QLFAFYU=</DQ><InverseQ>Ze0NWFosukIC8PFqXh0REODutp5YFdg+sLw9s9e6el5mL/+pzLkqlNSp5LOLydaoZGTXq03R7NZEinFymYnu7UaeSxvy/YqTqYf4v9YP7H2ppXOTpuSaRm+HNipL/Q2UgdWanoZNUOZlXtwcgOKc31n0FF4twc8bUPCqoTqpP/g=</InverseQ></RSAKeyValue>";
+//    char keyxml[] = "<RSAKeyValue><Modulus>ykLM2kO3l7y6184IKhVpSdSWMEbvDZeX2tuXuGPhZ9D4ZXzIYE6A4wH5neWsaXlf/tcRUb11oo7cGstNq71cFCMZk4xS6iiBIf0It185HU6/nAxTkA7c22b4ocvdf8wBOOPUGu4JSGocO4OYnxna8s10Okeow4bJ7gq1YkMX8WpnOxFyTn7RPtSmHlpU0DR7r+msuuqGAzQoUPn6ECSG/MRdp8TFf4gv/JDrNnXezXiQaOI/y5josFYvMi4frYakYS9RtUstZ0w3GqMY5PYHkiTWCcBZjF4oKY00ypTuCqyt1sv9yBhCEJBqhHjoT/hdOioaYchH2104PZnXSHw0hw==</Modulus><Exponent>AQAB</Exponent>";
 //    char key[]= "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDJgQfODtCNz/HP"
 //                "ZlF58boMSS95cN7tmUL/zPkXiMl1/K8Tk2N/eJHrpEG38QVopNhlaiRxNN4WOlRf"
 //                "                            5DKUSoCtH+B9WobodVcyUA7TQAEm5rZkPNo14/UTDVDsql4ugW8his38Mr4n4PfUW9+VFWHpTIIFbR0V+5NT2EQiEnCHxnBYgQlSa7JvphcsxKSRsXZ/+I4DoRudDfp71nrTm4gOeiuMUVzIOF+S/lCPBGKDXyyvJAOAoxuD8dB0yeohMkn50VnvGLMG6QmLAE50GE6BAB0P+EvGj14NgsE/thLzhnDRgmK9Cfn5KODUtfmsmXCbuXSsiVveUvsKlb4WPXYVAgMBAAECggEALz+RG/D/V/FFavM78ZMLo+vZNOmRbDb+rcpbMfiB/Kd2SenKb85OsOk/+6iJMyNMFmOQDfduh9m/hQiWD410pKOP2PTMI1+4RXTeNQyR+JQqelCGfhJomcIKkqPUF6WD8GKCsDsZuXIXynSMdYGhBrpI1oriQhBOWF+igja+qickEXvAUx+r5NMr+Q6YhEZoxx3k/77sG9gvodq/GYoX7KzODiH1eaMFIgThkwO7Oswwv7IyoZ+UIb2vVm+IWW8seMzxmLAqz5N8rUZPDWRTc/G1aSpOcCD+EDglH8uehwunNWZ9fbC8HdukDX83rrMpvTABzxw7ekf6BHh+s4iglQKBgQDn7Ho+4ui8XIdF/ceegGlwbQn9vbkQnKZeg/SXP/Lnf9VxlE8CLuLzbLmA30WYjtWS2gbcNr/Ffv3w9NGoJP90y12RLU2g8lpRObLN5d2xmwRmQIF/dg+4KRteLgFfrcLuSLcj8/cfWCJX/Je4MqIHM24fVYTKqJu3EHAPSx5BtwKBgQDebCEmC8HQzNFn4LKqKVrdQB3j245i4dBR/BL76TMoBBgtpoNEsvJ0aWeV5d2SHzHD4cJOW20xpbL3za++j/BuZThr2wCaxbSD5TxN94qUOyzRs0PT9CZzvq8qS8iegRVrGBmtkLZVLhC2+IyE6esClO2cBbzOijyIfQuxF4gWkwKBgQDMY18oZJhux6x/RjPRv6EsbyvK7pRVy3fi+69mS/kpg0L7oZQvfFqN5Fdm911CIT6e+H3rPGStDEmHPHo4EMMAjuiatK4hFPP7eTnWsqk5iD/MTTTSu50G01NHIIwdYejUTkj36lzyxp0dpYGf1x9r8SsvehJY91ajcl0PXUgA6QKBgQDT4Y/GbYbJgIOvgBbTEKg1gmG28S13twO7RfVTsngAE75wpmIALLPY/5wk6J+lFkBTCJoQCPpBREbz1yYm03nHwHb6D9tIlTP8PYCwCTMjOCfe7/WaUMfclPbKxPytOeyMY536gJOhG0vi8WzzJN6yS+r6KWEOJBO8NdrQbck/LwKBgQCLR47+q+jufc6omk6CVTywvLhqBbf5lf0kvwe8HAJ0O0X9RPpaQWd8YERFUQ45WKURbnQgnTHf1VsbzGWli0zyRU4PU5xjUgGLoG8cP5qD4nRfpDVw9ZJLFdfdT37SJAXEr8LE7A0OQLIJCNEsRZqCUhPJ1QDFmV7+0ZsnT+5smg==\n-----END PRIVATE KEY-----";
@@ -47,27 +59,58 @@ int main(int argc, char *argv[])
 //    RSA *r = NULL, *red = NULL;
 //    char res[5000];
 //    int flag;
-//    prikeyToRSA(key, &r, NULL);
-//    const EVP_CIPHER *tl = deccss;
+//    //prikeyToRSA(key, &r, NULL);
+//    flag = xmlkeyToRSA(keyxmlp, &r);
+//    printf("%d\n", flag);
+//    flag = RSAGetPriXml(r, res);
+//    printf("%d\n", flag);
+
+
+
+//    const EVP_CIPHER *tl = EVP_des_ofb();
+//    int len;
+//    BIO *out=BIO_new(BIO_s_mem());
+//    flag = PEM_write_bio_RSAPrivateKey(out,r,tl,NULL,0,NULL,(void*)"money");
+//    printf("%d\n",flag);
+//    len=BIO_ctrl_pending(out);
+//    BIO_read(out,res,len);
+//    res[len] = '\0';
+//    BIO_free(out);
+//    printf("%s\n",res);
+
+//    out=BIO_new(BIO_s_mem());
+//    EVP_PKEY *k = EVP_PKEY_new();
+//    EVP_PKEY_set1_RSA(k, r);
+//    flag = PEM_write_bio_PKCS8PrivateKey(out,k,tl,"money",5,NULL, NULL);
+//    printf("%d\n",flag);
+//    len=BIO_ctrl_pending(out);
+//    len = BIO_read(out,res,len);
+//    res[len] = '\0';
+//    EVP_PKEY_free(k);
+//    BIO_free(out);
+//    printf("%s\n",res);
 
 //    flag = RSAGetPKCS1(r, res, tl, (void*)"money");
 //    printf("%d\n%s\n", flag, res);
 
-//    flag = prikeyToRSA(res, &red, (void*)"money");
-//    flag = RSAGetPKCS1(r, res, NULL, NULL);
+//    flag = RSAGetPKCS8(r, res, tl, (void*)"money");
 //    printf("%d\n%s\n", flag, res);
-//    flag = RSAGetPKCS8(r, res, NULL, NULL);
+
+//    flag = prikeyToRSA(res, &red, (void*)"money");
+
+//    flag = RSAGetPKCS1(red, res, NULL, NULL);
+//    printf("%d\n%s\n", flag, res);
+//    flag = RSAGetPKCS8(red, res, NULL, NULL);
 //    printf("%d\n%s\n", flag, res);
 
 //    flag = RSAGetPKCS8(r, res, EVP_des_ede3_cbc(), (void*)"money");
 //    printf("%d\n%s\n", flag ,res);
 
-    char *kkk[] = {"AES-128-CBC", "AES-128-ECB", "AES-128-CFB", "AES-128-OFB","AES-192-CBC", "AES-192-ECB", "AES-192-CFB", "AES-192-OFB","AES-256-CBC", "AES-256-ECB", "AES-256-CFB", "AES-256-OFB","DES-CBC", "DES-ECB", "DES-CFB", "DES-OFB","DES-EDE-CBC", "DES-EDE", "DES-EDE-OFB", "DES-EDE-CFB","DES-EDE3-CBC", "DES-EDE3", "DES-EDE3-OFB", "DES-EDE3-CFB","DESX-CBC","RC4","RC4-40","IDEA-CBC", "IDEA-ECB", "IDEA-CFB", "IDEA-OFB","RC2-CBC", "RC2-ECB", "RC2-CFB", "RC2-OFB","RC2-40-CBC", "RC2-64-CBC","BF-CBC", "BF-ECB", "BF-CFB", "BF-OFB","CAST5-CBC", "CAST5-ECB", "CAST5-CFB", "CAST5-OFB","RC5-32-12-16-CBC", "RC5-32-12-16-ECB", "RC5-32-12-16-CFB", "RC5-32-12-16-OFB","AES-128-GCM", "AES-192-GCM", "AES-256-GCM","AES-128-OCB(VOID)", "AES-192-OCB(VOID)", "AES-256-OCB(VOID)","AES-128-CCM", "AES-192-CCM", "AES-256-CCM","CHACHA20","CHACHA20-POLY1305"};
+//    char *kkk[] = {"AES-128-CBC", "AES-128-ECB", "AES-128-CFB", "AES-128-OFB","AES-192-CBC", "AES-192-ECB", "AES-192-CFB", "AES-192-OFB","AES-256-CBC", "AES-256-ECB", "AES-256-CFB", "AES-256-OFB","DES-CBC", "DES-ECB", "DES-CFB", "DES-OFB","DES-EDE-CBC", "DES-EDE", "DES-EDE-OFB", "DES-EDE-CFB","DES-EDE3-CBC", "DES-EDE3", "DES-EDE3-OFB", "DES-EDE3-CFB","DESX-CBC","RC4","RC4-40","IDEA-CBC", "IDEA-ECB", "IDEA-CFB", "IDEA-OFB","RC2-CBC", "RC2-ECB", "RC2-CFB", "RC2-OFB","RC2-40-CBC", "RC2-64-CBC","BF-CBC", "BF-ECB", "BF-CFB", "BF-OFB","CAST5-CBC", "CAST5-ECB", "CAST5-CFB", "CAST5-OFB","id-aes128-GCM", "id-aes192-GCM", "id-aes256-GCM","AES-128-OCB", "AES-192-OCB", "AES-256-OCB","id-aes128-CCM", "id-aes192-CCM", "id-aes256-CCM","ChaCha20","ChaCha20-Poly1305","RC5-32-12-16-CBC", "RC5-32-12-16-ECB", "RC5-32-12-16-CFB", "RC5-32-12-16-OFB"};
 
-    int nidd = EVP_CIPHER_nid(EVP_rc5_32_12_16_cbc());
-    EVP_aes_128_cbc()
-    printf("%d\n", nidd);
-    printf("%s\n",OBJ_nid2sn(nidd));
+//    int nidd = EVP_CIPHER_nid(EVP_aes_128_cbc());
+//    printf("%d\n", nidd);
+//    printf("%s\n",OBJ_nid2sn(nidd));
 
 
 

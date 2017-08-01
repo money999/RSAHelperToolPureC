@@ -24,5 +24,6 @@ int RSAVerifyBase64(RSA *r, unsigned char *in, unsigned char out[], int *outl, i
 int RSAVerifyRes(RSA *r, unsigned char *in, int inl, unsigned char out[], int *outl, int *type);
 int decodeBase64(const unsigned char *in, unsigned char out[], int *outl);
 int parseXml(const char *keyword, const char* str, char res[]);
+int RSAPubCheck(RSA *r);
 
 #endif // HELPER_H

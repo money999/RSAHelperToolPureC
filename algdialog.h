@@ -7,6 +7,10 @@
 #include <QGridLayout>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QButtonGroup>
+#include <QRadioButton>
+#include <QAbstractButton>
+#include <openssl/evp.h>
 
 class AlgDialog : public QDialog
 {
@@ -17,9 +21,18 @@ public:
     ~AlgDialog();
 
 private:
-    QLabel *hint;
+    QLabel *hint, *hintOldAlg;
     QGridLayout *glAlg;
     QPushButton *pbSure, *pbCancel;
+    QButtonGroup *bgRadio;
+
+protected:
+    void execSure();
+    void execCancel();
+
+signals:
+    void sendAlg(int nid);
+
 };
 
 #endif // ALGDIALOG_H
