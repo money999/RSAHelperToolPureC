@@ -1,5 +1,4 @@
 #include "helper.h"
-#include <QDebug>
 
 /**
  * @brief prikeyToRSA
@@ -153,7 +152,6 @@ int RSASignBase64(RSA *r, int type, const unsigned char *sour, int sourl, unsign
     switch (type){
     case NID_sha1:
         SHA1(sour, sourl, hashStr);
-        qDebug()<<"ttt";
         RSA_sign(NID_sha1, hashStr, SHA_DIGEST_LENGTH, f, &flen, r);
         break;
     case NID_sha224:

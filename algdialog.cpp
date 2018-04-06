@@ -1,5 +1,4 @@
 #include "algdialog.h"
-#include <QDebug>
 
 AlgDialog::AlgDialog(QWidget *parent)
     : QDialog(parent)

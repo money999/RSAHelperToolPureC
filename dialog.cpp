@@ -1,5 +1,4 @@
  #include "dialog.h"
-#include <QDebug>
 
 MyDialog::MyDialog(QWidget *parent)
     : QDialog(parent)
@@ -12,7 +11,7 @@ MyDialog::MyDialog(QWidget *parent)
     flags |=Qt::WindowMaximizeButtonHint;
     setWindowFlags(flags);
 
-    setWindowTitle(tr("RSATool by fzj v0.9.0 beta"));
+    setWindowTitle("RSATool by money999 v0.9.0 beta");
     setWindowIcon(QIcon(":/image/lyd"));
 
     twDisplay = new QTabWidget();
@@ -397,9 +396,13 @@ MyDialog::MyDialog(QWidget *parent)
     txtLB = new QLabel();
     txtLB->setText(tr("copyRight"));
     QFont ft1;
-    ft1.setPointSize(20);
+    ft1.setPointSize(15);
     txtLB->setFont(ft1);
     tmpVL->addWidget(tmpImage,0, Qt::AlignHCenter);
+    tmpVL->addWidget(txtLB,0, Qt::AlignHCenter);
+    txtLB = new QLabel();
+    txtLB->setText(tr("copyRightReserve"));
+    txtLB->setFont(ft1);
     tmpVL->addWidget(txtLB,0, Qt::AlignHCenter);
     tmpGL->addLayout(tmpVL, 0, 0, 1, 1, Qt::AlignVCenter);
     txtLB = new QLabel();
@@ -578,13 +581,11 @@ void MyDialog::execSign()
         break;
     }
     flag = 0;
-    qDebug()<<"sss";
     if(1 == bgT2Radio->checkedId()){
         flag = RSASignBase64(r, type, (const unsigned char*)msg, strlen(msg), res);
     }else{
         flag = RSASignHashBase64(r, type, (const unsigned char*)msg, strlen(msg), res);
     }
-    qDebug()<<"kkk";
     if(flag){
         unsigned char resHex[6000];
         int resHexLen;
@@ -883,7 +884,6 @@ QString MyDialog::showPrikey(RSA *r)
 
 QString MyDialog::showCryptoPrikey(RSA *r, QString pass)
 {
-    qDebug()<<pass;
     char res[6000];
     QByteArray tmpkey = pass.toLatin1();
     char *chpass = tmpkey.data();
